@@ -36,9 +36,9 @@ export interface User extends Document {
     verifyEmailCode:string;
     verifyEmailCodeExpiry:Date;
     isVerifiedEmail: boolean;
-    verifySmsCode:string;
-    verifySmsCodeExpiry:Date;
-    isVerifiedSms: boolean;
+    // verifySmsCode:string;
+    // verifySmsCodeExpiry:Date;
+    // isVerifiedSms: boolean;
     bookSelling:Book[]
 }
 
@@ -47,13 +47,10 @@ const UserSchema:  Schema<User> = new Schema({
            userFirstName:{
             type:String,
             required:true,
-            trim:true,
-            unique:true
             },
            userLastName:{
             type:String,
             requied:true,
-            unique:true
            },
            email:{
             type:String,
@@ -80,22 +77,24 @@ const UserSchema:  Schema<User> = new Schema({
                 type:Boolean,
                 required:true
             },
-            verifySmsCode:{
-                type:String,
-                required:true
-            },
-            verifySmsCodeExpiry:{
-                type:Date,
-                required:true
-            },
-            isVerifiedSms:{
-                type:Boolean,
-                required:true
-            },
             bookSelling:[BookSchema]
 })
 
 const UserModel = (mongoose.models.User as mongoose.Model<User> || mongoose.model<User>('User', UserSchema))
 
 export default UserModel;
+
+
+// verifySmsCode:{
+//     type:String,
+//     required:false
+// },
+// verifySmsCodeExpiry:{
+//     type:Date,
+//     required:false
+// },
+// isVerifiedSms:{
+//     type:Boolean,
+//     required:false
+// },
 
