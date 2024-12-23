@@ -1,14 +1,18 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { string } from 'zod';
 
 
 export interface Book extends Document{
+    bookImages:string
     bookName:string;
     edition:string;
     price:string;
     condition:string;
+    description:string
 }
 
 const BookSchema: Schema<Book> = new Schema({
+    bookImages:[String],
     bookName:{
         type:String,
         required:true,
@@ -24,6 +28,10 @@ const BookSchema: Schema<Book> = new Schema({
     condition:{
         type:String,
         required:true
+    },
+    description:{
+        type:String,
+        required:false
     }
 })
 
@@ -59,7 +67,7 @@ const UserSchema:  Schema<User> = new Schema({
            },
            password:{
             type:String,
-            requied:true
+            requied:true,
             },
             mobileNo:{
                 type:String,
