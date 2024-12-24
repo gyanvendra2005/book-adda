@@ -1,9 +1,10 @@
 import {z} from 'zod'
  
 export  const signUpSchema = z.object({
-    userFirstName: z.string({message:"Enter First Name"}),
-    userLastName: z.string({message:"Enter Last Name"}),
-    email: z.string().email({message:"Invaild email address"}),
-    password:z.string().min(8,{message:"Password should have atleast 8 character"})
-    
+    firstName: z.string().min(2, "First name is required"),
+    lastName: z.string().min(2, "Last name is required"),
+    email: z.string().email("Please enter a valid email"),
+    mobile: z.string().length(10, "Mobile number must be 10 digits").regex(/^\d+$/, "Mobile number must contain only digits"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    location: z.string().min(2, "Location is required"),
 })
