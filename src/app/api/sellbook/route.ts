@@ -1,10 +1,12 @@
 import connectDB from "@/lib/dbConnect";
-import UserModel from "@/models/User";
-import cloudinary, { UploadImage } from "@/app/utils/cloudinary";
+import {BookModel, UserModel} from "@/models/User";
+import { UploadImage } from "@/app/utils/cloudinary";
+import { any } from "zod";
+import {Book} from "@/models/User";
 
 
 
-export async function POST(request) {
+export async function POST(request:Request) {
     await connectDB()
       try {
         const dataform = await request.formData();
@@ -14,7 +16,11 @@ export async function POST(request) {
         const image = dataform.getAll('images')
         const condition = dataform.get('condition')
         const edition = dataform.get('edition')
-        // const description =dataform.get('description')
+        const description =dataform.get('description')
+        const category = dataform.get('category')
+        const subCategory = dataform.get('subCategory')
+        const otherCategory = dataform.get('otherCategory')
+        // const location = dataform.get('location')
         console.log(image);
         
         if(!image){
@@ -30,18 +36,22 @@ export async function POST(request) {
         }
         
         const datas = await UploadImage(image,"bookAdda")
-        console.log(datas);
+        // console.log(datas);
 
         const user = await UserModel.findOne({email})
-        let newBook = {bookName, price,condition,edition, bookImages:[]}
+        const location = user?.location
+        let newBook = {bookName, price,condition,edition, bookImages:[],description,category,subCategory,otherCategory,location}
         for (const data of datas) {
             newBook.bookImages.push(data.secure_url);
         }
-    console.log(newBook);
-    
-
-        user.bookSelling.push(newBook)
-        await user.save();
+        // console.log(newBook);
+        
+        user?.bookSelling.push(newBook as Book)
+        await user?.save();
+        const book = new BookModel({ ...newBook });
+        console.log(book);
+        
+        await book.save();
         return Response.json({
             success: true,
             message:'Book is ready to sell'

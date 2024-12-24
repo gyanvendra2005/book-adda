@@ -8,7 +8,11 @@ export interface Book extends Document{
     edition:string;
     price:string;
     condition:string;
-    description:string
+    description:string;
+    category:string;
+    subCategory:string;
+    otherCategory:string;
+    location:string;
 }
 
 const BookSchema: Schema<Book> = new Schema({
@@ -32,6 +36,22 @@ const BookSchema: Schema<Book> = new Schema({
     description:{
         type:String,
         required:false
+    },
+    category:{
+        type:String,
+        required:true
+    },
+    subCategory:{
+        type:String,
+        required:true
+    },
+    otherCategory:{
+        type:String,
+        required:false
+    },
+    location:{
+        type:String,
+        required:true
     }
 })
 
@@ -41,6 +61,7 @@ export interface User extends Document {
     email:string;
     mobileNo:string;
     password:string;
+    location:string;
     verifyEmailCode:string;
     verifyEmailCodeExpiry:Date;
     isVerifiedEmail: boolean;
@@ -73,6 +94,10 @@ const UserSchema:  Schema<User> = new Schema({
                 type:String,
                 required:true
             },
+            location:{
+                type:String,
+                required:true
+            },
             verifyEmailCode:{
                 type:String,
                 required:true
@@ -89,8 +114,8 @@ const UserSchema:  Schema<User> = new Schema({
 })
 
 const UserModel = (mongoose.models.User as mongoose.Model<User> || mongoose.model<User>('User', UserSchema))
-
-export default UserModel;
+const BookModel = (mongoose.models.Book as mongoose.Model<Book> || mongoose.model<Book>('Book', BookSchema))
+export {UserModel,BookModel};
 
 
 // verifySmsCode:{

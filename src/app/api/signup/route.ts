@@ -1,5 +1,5 @@
 import connectDB from "@/lib/dbConnect";
-import UserModel from "@/models/User";
+import {UserModel} from "@/models/User";
 import { sendVerificationEmail } from "@/sendVerificationEmail/sendEmail";
 // import bcrypt from "bcryptjs";
 import bcrypt from 'bcryptjs';
@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs';
 export async function POST(request:Request) {
      await connectDB();
     try {
-        const {userFirstName,userLastName,email,password, mobileNo} = await request.json();
+        const {userFirstName,userLastName,email,password, mobileNo,location} = await request.json();
         console.log(userFirstName);
         console.log(userLastName);
         console.log(email);
@@ -40,6 +40,7 @@ export async function POST(request:Request) {
                 email,
                 password:hashedPassword,
                 mobileNo,
+                location,
                 verifyEmailCode,
                 verifyEmailCodeExpiry:expiryDate,
                 isVerifiedEmail:false,
