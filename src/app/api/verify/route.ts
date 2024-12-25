@@ -1,13 +1,13 @@
 import connectDB from "@/lib/dbConnect";
-import UserModel from "@/models/User";
+import {UserModel} from "@/models/User";
 
 export async function POST(request:Request){
     await connectDB();
 
     try {
         const {email,code} = await request.json()
-        // const decodeduser = decodeURIComponent(email);
-        const user = await UserModel.findOne(email)
+        const decodedemail = decodeURIComponent(email);
+        const user = await UserModel.findOne({email:decodedemail});
         console.log(user?.verifyEmailCode);
         // const isCodeNotExpired = new Date(user?.verifyEmailCodeExpiry) > new Date
         

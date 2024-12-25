@@ -4,21 +4,10 @@ import bcrypt from "bcryptjs"
 import connectDB from "@/lib/dbConnect";
 import { UserModel } from "@/models/User";
 
-// declare module "next-auth" {
-//   interface User {
-//     location?: string;
-//   }
-
-//   interface Session {
-//     user: {
-//       location?: string;
-
-//     } & DefaultSession["user"];
-//   }
-// }
-
 
 export const authOptions : NextAuthOptions = {
+    // console.log("Hello");
+    
     providers:[
         CredentialsProvider({
             name: "Credentials",
@@ -32,7 +21,7 @@ export const authOptions : NextAuthOptions = {
                 try {
                     const user = await UserModel.findOne({
                         $or:[
-                            {email:credentials.identifier},
+                            {email:credentials.email},
                         ]
                     })
                     if(!user){
@@ -57,13 +46,15 @@ export const authOptions : NextAuthOptions = {
         })
     ],
     callbacks:{
-       
-          async jwt({ token, user  }) {
+                 
+    
+          
+           async jwt({ token, user  }) {
             if(user){
                 token._id = user._id?.toString();
                 token.isVerifiedEmail = user.isVerifiedEmail;
                 token.userFirstName =  user.userFirstName;
-                token.location = user.location;
+                // token.location = user.location;
             }
             return token
           },
@@ -72,7 +63,7 @@ export const authOptions : NextAuthOptions = {
                 session.user.id = token._id?.toString();
                 session.user.isVerifiedEmail = token.isVerifiedEmail;
                 session.user.userFirstName =  token.userFirstName;
-                session.user.location = token.location;
+                // session.user.location = token.location;
             }
             return session
           }

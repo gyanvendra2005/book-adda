@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast'
-import { Loader2 } from "lucide-react";
+import { Loader2, Router } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
 
@@ -20,6 +21,7 @@ export default function SignupForm() {
   const [isSubmitting, setisSubmitting] = useState(false);
   const [isCityFound, setCityFound] = useState(false);
   const {toast} = useToast()
+  const router = useRouter()
 
 //   const form = useForm({
 //     resolver:zodResolver(signUpSchema),
@@ -33,6 +35,7 @@ export default function SignupForm() {
     e.preventDefault();
     setisSubmitting(true)
     try {
+        citySearch(e);
         // console.log(data);
         const response = await axios.post('/api/signup',{
             userFirstName:firstName,
@@ -46,10 +49,10 @@ export default function SignupForm() {
           title:'success',
           description:response.data.message
         })
-        // if(response.data.success){
-        //   router.replace(`/verify/${username}`)
-          // router.replace(`/signin`)
-        // }
+        if(response.data.success){
+          router.replace(`/verify/${email}`)
+        //   router.replace(`/signin`)
+        }
         setisSubmitting(false)
       } catch (error) {
         console.log("Error in sign up of user",error);
@@ -154,27 +157,13 @@ return (
           <Label htmlFor="password">Location</Label>
           <Input id="password" placeholder="Agra" type="search" value={location}
            onChange={handleInputChange} />
-            <p>{message}</p>
-          <button className="bg-gradient-to-br  relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-32 text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]" onClick={citySearch}>
-          {isSubmitting ? (
-            <div className="flex items-center justify-center">
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                <span>Please wait...</span>
-            </div>
-            ) : (
-                   'Sign Up'
-                )}
-
-          <BottomGradient /> 
-          </button> 
-
+            <p className={`${isCityFound === true ? 'text-green-500' : 'text-red-500'}`}>{message}</p>
         </LabelInputContainer>
 
         <button
           className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-          type="submit" disabled={!isCityFound}
+          type="submit" 
         >
-          {/* Sign up &rarr; */}
           {isSubmitting ? (
            <div className="flex items-center justify-center">
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
