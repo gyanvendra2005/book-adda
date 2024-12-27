@@ -54,6 +54,7 @@ export const authOptions : NextAuthOptions = {
                 token._id = user._id?.toString();
                 token.isVerifiedEmail = user.isVerifiedEmail;
                 token.userFirstName =  user.userFirstName;
+                token.email = user.email;
                 // token.location = user.location;
             }
             return token
@@ -63,6 +64,7 @@ export const authOptions : NextAuthOptions = {
                 session.user.id = token._id?.toString();
                 session.user.isVerifiedEmail = token.isVerifiedEmail;
                 session.user.userFirstName =  token.userFirstName;
+                session.user.email = token.email;
                 // session.user.location = token.location;
             }
             return session

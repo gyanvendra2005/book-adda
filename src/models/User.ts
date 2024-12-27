@@ -5,13 +5,14 @@ import { string } from 'zod';
 export interface Book extends Document{
     bookImages:string
     bookName:string;
+    author:string;
     edition:string;
     price:string;
     condition:string;
     description:string;
     category:string;
-    subCategory:string;
-    otherCategory:string;
+    // subCategory:string;
+    // otherCategory:string;
     location:string;
 }
 
@@ -23,7 +24,11 @@ const BookSchema: Schema<Book> = new Schema({
     },
     edition:{
         type:String,
-        required:true,
+        required:false,
+    },
+    author:{
+        type:String,
+        required:false
     },
     price:{
         type:String,
@@ -41,14 +46,14 @@ const BookSchema: Schema<Book> = new Schema({
         type:String,
         required:true
     },
-    subCategory:{
-        type:String,
-        required:true
-    },
-    otherCategory:{
-        type:String,
-        required:false
-    },
+    // subCategory:{
+    //     type:String,
+    //     required:true
+    // },
+    // otherCategory:{
+    //     type:String,
+    //     required:false
+    // },
     location:{
         type:String,
         required:true

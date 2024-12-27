@@ -36,15 +36,16 @@ function Navbar({ className }: { className?: string }) {
           <div className="flex space-x-6">
             <MenuItem setActive={setActive} active={active} item="Services">
               <div className="flex flex-col space-y-4 text-sm">
-                <HoveredLink href="/web-dev">Web Development</HoveredLink>
-                <HoveredLink href="/interface-design">Interface Design</HoveredLink>
-                <HoveredLink href="/seo">Search Engine Optimization</HoveredLink>
-                <HoveredLink href="/branding">Branding</HoveredLink>
+                <HoveredLink href="/sellbook">Sell Book</HoveredLink>
+                <HoveredLink href="/interface-design">Buy Book</HoveredLink>
+                <HoveredLink href="/interface-design">Online Book</HoveredLink>
+                {/* <HoveredLink href="/seo">Search Engine Optimization</HoveredLink>
+                <HoveredLink href="/branding">Branding</HoveredLink> */}
               </div>
             </MenuItem>
   
             <MenuItem setActive={setActive} active={active} item="Products">
-              <div className="text-sm grid grid-cols-2 gap-10 p-4">
+              <div className="text-sm grid grid-cols-2 gap-5 p-4">
                 <ProductItem
                   title="Algochurn"
                   href="https://algochurn.com"

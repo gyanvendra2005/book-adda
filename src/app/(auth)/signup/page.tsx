@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useToast } from '@/hooks/use-toast'
 import { Loader2, Router } from "lucide-react";
 import { useRouter } from "next/navigation";
+import cities from "@/cities.json"
 
 export default function SignupForm() {
 
@@ -22,37 +23,32 @@ export default function SignupForm() {
   const [isCityFound, setCityFound] = useState(false);
   const {toast} = useToast()
   const router = useRouter()
+  let cityFound = false;
 
-//   const form = useForm({
-//     resolver:zodResolver(signUpSchema),
-//     defaultValues:{
-//       username:"",
-//       email:"",
-//       password:''
-//     }
-//   })
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
     setisSubmitting(true)
+    // setCity(e.target.location.value);
+    citySearch(e);
+  
     try {
-        citySearch(e);
-        // console.log(data);
-        const response = await axios.post('/api/signup',{
-            userFirstName:firstName,
-            userLastName:lastName,
-            email,
-            mobileNo:mobile,
-            password,
-            location
-        })
-        toast({
-          title:'success',
-          description:response.data.message
-        })
-        if(response.data.success){
-          router.replace(`/verify/${email}`)
-        //   router.replace(`/signin`)
-        }
+          if(cityFound){
+            const response = await axios.post('/api/signup',{
+              userFirstName:firstName,
+              userLastName:lastName,
+              email,
+              mobileNo:mobile,
+              password,
+              location
+          })
+          toast({
+            title:'success',
+            description:response.data.message
+          })
+          if(response.data.success){
+            router.replace(`/verify/${email}`)
+          //   router.replace(`/signin`)
+          }
+          }
         setisSubmitting(false)
       } catch (error) {
         console.log("Error in sign up of user",error);
@@ -72,48 +68,70 @@ export default function SignupForm() {
     setCity(event.target.value);
   };
 
+  // city found or not
   const citySearch = (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setisSubmitting(true)
-    // const name = 'agra';  
-    const url = 'https://api.api-ninjas.com/v1/city?name=' + location.trim();
-  
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'X-Api-Key': 'wQU9X7ekDYMX3yrBRq65PA==TxkTLEcUkZLVDmpd',
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+
+    
+    for (const city of cities.cities) {
+      if (location.trim().toLowerCase() === city.City.toLowerCase()) {
+        setCity(city.City);
+        setMessage('City found');
+        setCityFound(true);
+        cityFound = true;
+        break;
       }
-      console.log(response);
-      
-      return response.json();
-    })
-    .then(result => {
-    //   console.log(result[0].name);  
-         if(location.trim().length === result[0].name.length){
-            setCity(result[0].name)
-            console.log(location);
-            setMessage('City found');
-            setCityFound(true);
-            setisSubmitting(false)
-         }
-        else{
-            setMessage('City not found');
-            console.log('City not found');
-            setisSubmitting(false)
-        } 
-    })
-    .catch(error => {
-      console.error('error', error); 
+    }
+
+    if (!cityFound) {
       setMessage('City not found');
-      setisSubmitting(false)
-    });
-  }
+      setCityFound(false);
+    }
+
+    setisSubmitting(false);
+   }
+
+
+    // const name = 'agra';  
+    // const url = 'https://api.api-ninjas.com/v1/city?name=' + location.trim();
+  
+  // fetch(url, {
+  //   method: 'GET',
+  //   headers: {
+  //     'X-Api-Key': 'wQU9X7ekDYMX3yrBRq65PA==TxkTLEcUkZLVDmpd',
+  //     'Content-Type': 'application/json'
+  //   }
+  // })
+  //   .then(response => {
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+  //     console.log(response);
+      
+  //     return response.json();
+  //   })
+  //   .then(result => {
+  //   //   console.log(result[0].name);  
+  //        if(location.trim().length === result[0].name.length){
+  //           setCity(result[0].name)
+  //           console.log(location);
+  //           setMessage('City found');
+  //           setCityFound(true);
+  //           setisSubmitting(false)
+  //        }
+  //       else{
+  //           setMessage('City not found');
+  //           console.log('City not found');
+  //           setisSubmitting(false)
+  //       } 
+  //   })
+  //   .catch(error => {
+  //     console.error('error', error); 
+  //     setMessage('City not found');
+  //     setisSubmitting(false)
+  //   });
+  
 
  
 return (
