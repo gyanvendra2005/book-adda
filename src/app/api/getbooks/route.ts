@@ -9,17 +9,18 @@ export async function GET(request:Request) {
 
             const url = new URL(request.url);  // Get the full URL
             const category = url.searchParams.get('category');
-            const subCategory = url.searchParams.get('subCategory');
+            const condition= url.searchParams.get('condition');
             const otherCategory = url.searchParams.get('otherCategory');
             const location = url.searchParams.get('location');
 
-            console.log(category, subCategory, otherCategory, location);
+            console.log(category,location);
 
             let books = await BookModel.aggregate([
                 {
                   $match: {
-                    location: location,  
-                    // category: category,
+                    ...(location && { location: location }), 
+                    ...(category && { category: category }), 
+                    ...(condition && { condition: condition }), 
                   }
                 }
               ]);

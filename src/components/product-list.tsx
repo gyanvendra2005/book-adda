@@ -6,13 +6,35 @@ import { useOutsideClick } from "./ui/product-card";
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea, ScrollBar } from "./ui/scrollarea"
+import { Sidebar, SidebarBody, SidebarLink } from "./ui/side-bar";
+import {
+  IconArrowLeft,
+  IconBrandTabler,
+  IconSettings,
+  IconUserBolt,
+} from "@tabler/icons-react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+ 
 
 export function ExpandableCardDemo() {
-  const [active, setActive] = useState<(typeof cards)[number] | boolean | null>(
+  const [active, setActive] = useState<[number] | boolean | null>(
     null
   );
   const ref = useRef<React.RefObject<null>>(null);
   const id = useId();
+  const [category,setCategoryFilter] = useState('')
+  const [priceFilter, setPriceFilter] = useState<{ min: number; max: number }>({ min: 20, max: 10000 });
+
+  const[location,setLocationFilter]=useState('')
+  const[condition,setConditionFilter]=useState('')
+  const [city, setCity] = useState("");
+  const [isCityFound, setCityFound] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
+  console.log(location,condition,category);
+  
+
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -38,7 +60,7 @@ export function ExpandableCardDemo() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`/api/getbooks?category=competative&subCategory=SSB&location=Agra`);
+      const response = await axios.get(`/api/getbooks?category=${category}&location=${location}&condition=${condition}`);
       console.log(response.data.books);
       setProducts(response.data.books);
 
@@ -56,13 +78,119 @@ export function ExpandableCardDemo() {
       });
     }
   };
+   useEffect(() => {
+       fetchProducts()
+   }, [])
+
+   // City search function
+  const citySearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    let cityFound = false;
+    for (const City of cities.cities) {
+      if (city.trim().toLowerCase() === City.City.toLowerCase()) {
+        setCity(City.City);
+        setMessage('City found');
+        setCityFound(true);
+        cityFound = true;
+        break;
+      }
+    }
+
+    if (!cityFound) {
+      setMessage('City not found');
+      setCityFound(false);
+    }
+
+    setIsSubmitting(false);
+  };
+
+
+  const applyFilters = ()=>{
+    // citySearch();
+    fetchProducts()
+  }
+  
 
   return (
-    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-  {/* Filter Section */}
-  <div className="col-span-1 sm:col-span-1 lg:col-span-1 p-4 bg-gray-100 rounded-lg shadow">
-    filter section
-    <button onClick={fetchProducts}>search</button>
+    <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {/* Filter Section */}
+  <div className="col-span-1 sm:col-span-1 lg:col-span-1 p-4 bg-gray-100 rounded-lg shadow h-full">
+    <h3 className="text-lg font-semibold mb-4">Filters</h3>
+
+    {/* Category Filter */}
+    <div className="mb-4">
+      <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+      <select
+        id="category"
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        onChange={(e) => setCategoryFilter(e.target.value)}
+      >
+        <option value="">All Categories</option>
+        <option value="Fiction">Fiction</option>
+        <option value="Non-Fiction">Non-Fiction</option>
+        <option value="science">Science</option>
+        <option value="history">History</option>
+      </select>
+    </div>
+
+    {/* Price Range Filter */}
+    <div className="mb-4">
+  <label htmlFor="priceRange" className="block text-sm font-medium text-gray-700">
+    Price Range upto ({priceFilter.min})
+  </label>
+  <div className="flex space-x-2 items-center">
+
+    {/* Range Slider */}
+    <input
+      type="range"
+      id="priceRange"
+      min="20"
+      max="10000"
+      step="10"
+      value={priceFilter.min}
+      className="flex-grow"
+      onChange={(e) => setPriceFilter((prev) => ({ ...prev, min: e.target.value }))}
+    />
+  </div>
+</div>
+
+
+    {/* Location Filter */}
+    <div className="mb-4">
+      <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
+      <input
+        type="text"
+        id="location"
+        placeholder="Enter location"
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        onChange={(e) => setLocationFilter(e.target.value)}
+      />
+      {message}
+    </div>
+
+    {/* Condition Filter */}
+    <div className="mb-4">
+      <label htmlFor="condition" className="block text-sm font-medium text-gray-700">Condition</label>
+      <select
+        id="condition"
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        onChange={(e) => setConditionFilter(e.target.value)}
+      >
+        <option value="">All Conditions</option>
+        <option value="new">New</option>
+        <option value="Used">Used</option>
+        <option value="refurbished">Refurbished</option>
+      </select>
+    </div>
+
+    <button
+      onClick={applyFilters}
+      className="w-full px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700"
+    >
+      Apply Filters
+    </button>
   </div>
 
   {/* Books Rendering, Search Bar, and Sort By */}
@@ -115,7 +243,7 @@ export function ExpandableCardDemo() {
           >
             {/* Horizontal Scrollable Image Carousel */}
             <motion.div layoutId={`image-${active.bookImages[0]}-${id}`}>
-              <ScrollArea className="w-150 whitespace-nowrap rounded-md border">
+              <ScrollArea className="w-180 whitespace-nowrap rounded-md border">
                 <div className="flex w-max space-x-4 p-4">
                   {active.bookImages.map((img, index) => (
                     <div key={index} className="overflow-hidden rounded-md">
@@ -123,7 +251,7 @@ export function ExpandableCardDemo() {
                         src={img}
                         alt={`Book image ${index}`}
                         style={{
-                          width: "600px", // Consistent width
+                          width: "465px", // Consistent width
                           height: "300px", // Height for proper scaling
                           objectFit: "cover", // Ensures the image covers the area
                         }}
@@ -180,58 +308,73 @@ export function ExpandableCardDemo() {
       )}
     </AnimatePresence>
 
-    {/* Product Cards Rendering */}
     <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {products.map((card) => (
+  {Array.isArray(products) && products.length > 0 ? (
+    products.map((card) => (
+      <motion.div
+        key={`card-${card.bookName}-${card._id}`}
+        layoutId={`card-${card.bookName}-${card._id}`}
+        onClick={() => setActive(card)}
+        className="flex flex-col bg-white shadow-lg rounded-xl cursor-pointer p-4 transition-transform transform hover:scale-105 hover:shadow-xl dark:bg-neutral-800"
+        aria-label={`View details of ${card.bookName}`}
+      >
+        {/* Book Image */}
         <motion.div
-          key={`card-${card.bookName}-${card._id}`}
-          layoutId={`card-${card.bookName}-${card._id}`}
-          onClick={() => setActive(card)}
-          className="flex flex-col justify-between items-center hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer bg-white shadow-lg w-full aspect-square p-4 transition"
-          style={{
-            minHeight: "100px",
-            minWidth: "100px",
-          }} // Equal size adjustment
-          aria-label={`View details of ${card.bookName}`}
+          layoutId={`image-${card.bookName}-${card._id}`}
+          className="w-full h-48 rounded-md overflow-hidden bg-gray-200"
         >
-          {/* Book Image for Product Card */}
-          <motion.div
-            layoutId={`image-${card.bookName}-${card._id}`}
-            className="flex-shrink-0 w-full h-3/5"
-          >
-            {card.bookImages && card.bookImages.length > 0 ? (
-              <img
-                src={card.bookImages[0]}
-                alt={card.bookName}
-                className="w-full h-full object-cover rounded-md"
-                style={{
-                  objectFit: "cover", // Ensures the image covers the area without distortion
-                }}
-              />
-            ) : (
-              <div className="w-full h-full bg-gray-300 rounded-md flex items-center justify-center">
-                <span>No Image Available</span>
-              </div>
-            )}
-          </motion.div>
-
-          <div className="flex flex-col justify-end mt-4 text-center flex-grow">
-            <motion.h3
-              layoutId={`title-${card.bookName}-${card._id}`}
-              className="font-medium text-neutral-800 dark:text-neutral-200"
-            >
-              {card.bookName}
-            </motion.h3>
-            <motion.p
-              layoutId={`description-${card.price}-${card._id}`}
-              className="text-neutral-600 dark:text-neutral-400"
-            >
-              {card.price ? `₹${Number(card.price).toLocaleString()}` : "Price not available"}
-            </motion.p>
-          </div>
+          {card.bookImages?.length > 0 ? (
+            <img
+              src={card.bookImages[0]}
+              alt={card.bookName}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex items-center justify-center w-full h-full text-gray-500">
+              No Image Available
+            </div>
+          )}
         </motion.div>
-      ))}
-    </ul>
+
+        {/* Book Details */}
+        <div className="mt-4 text-center">
+          <motion.h3
+            layoutId={`title-${card.bookName}-${card._id}`}
+            className="text-lg font-semibold text-neutral-800 dark:text-neutral-200 truncate"
+          >
+            {card.bookName}
+          </motion.h3>
+          <motion.p
+            layoutId={`description-${card.price}-${card._id}`}
+            className="text-gray-600 dark:text-gray-400 mt-1"
+          >
+            {card.price && card.price > 0
+              ? `₹${Number(card.price).toLocaleString()}`
+              : "Price not available"}
+          </motion.p>
+        </div>
+
+        {/* Add to Cart Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering the card click
+            handleAddToCart(card);
+          }}
+          className="mt-4 w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 focus:ring-2 focus:ring-orange-300 transition"
+        >
+          Add to Cart
+        </button>
+      </motion.div>
+    ))
+  ) : (
+    <div className="text-center text-neutral-600 dark:text-neutral-400 col-span-full">
+      No books found
+    </div>
+  )}
+</ul>
+
+
   </div>
 </div>
   

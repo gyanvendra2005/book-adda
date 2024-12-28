@@ -6,9 +6,9 @@ import {  signOut, useSession } from 'next-auth/react'
 
 export function NavbarMenu() {
    return (
-     <div className="relative w-full flex items-center justify-center">
-       <Navbar className="top-1 w-full" />
-     </div>
+    //  <div className="relative w-full items-center justify-center">
+       <Navbar className="top-0 w-full" />
+    //  </div>
   );
 }
 
