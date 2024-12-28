@@ -19,9 +19,7 @@ export async function GET(request:Request) {
                 {
                   $match: {
                     location: location,  
-                    category: category,
-                    subCategory: subCategory,
-                    otherCategory: otherCategory
+                    // category: category,
                   }
                 }
               ]);
@@ -29,7 +27,7 @@ export async function GET(request:Request) {
               if(!books||books.length ===0){
                 return Response.json({
                     success: false,
-                    message:'No User Found'
+                    message:'No Books found'
                 })
             }
             return Response.json({
