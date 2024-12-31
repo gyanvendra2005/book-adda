@@ -1,66 +1,10 @@
-// 'use client';
-
-// import React, { useState } from 'react';
-// import {ExpandableCardDemo }from "@/components/product-list"
-
-// export default function GetBooks() {
-  
-
-//   return (
-//     <div className="container grid grid-filter-column mt-20">
-
-
-    
-//         {/* <ExpandableCardDemo/> */}
-//       {/* <div className="main-product">
-//         <button
-//           onClick={fetchProducts}
-//           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-//         >
-//           Fetch Books
-//         </button>
-  
-//         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-//           {products.length > 0 ? (
-//             products.map((product, index) => (
-//               <div key={index} className="p-4 border rounded-md">
-//                 <h3 className="text-lg font-bold mb-2">{product.bookName}</h3>
-//                 <div className="mb-2">
-//                   {product.bookImages && (
-//                     <img
-//                       src={product.bookImages[0]}
-//                       alt={product.bookName}
-//                       className="w-full h-40 object-cover rounded-md"
-//                     />
-//                   )}
-//                 </div>
-//                 <p className="text-gray-700">Price: ₹{product.price}</p>
-//               </div>
-//             ))
-//           ) : (
-//             <p className="text-gray-500 col-span-full">
-//               No books to display. Click the button above to fetch books.
-//             </p>
-//           )}
-//         </div>
-//       </div>
-//     </section> */}
-//   </div>
-//   )
-// }
-
 "use client";
-import Image from "next/image";
 import React, { useEffect, useId, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useOutsideClick } from "./ui/product-card";
+import { motion } from "framer-motion";
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast';
-import { ScrollArea, ScrollBar } from "./ui/scrollarea"
-import cities from "@/cities.json";
-import Link from "next/link";
 import  {FaLocationDot } from "react-icons/fa6";
-import { NavbarMenu } from "@/components/navbar";
+import { useRouter } from "next/navigation";
  
 
 export default function ExpandableCardDemo() {
@@ -83,6 +27,9 @@ export default function ExpandableCardDemo() {
   
   const [products, setProducts] = useState([]);
   const { toast } = useToast();
+  const router = useRouter()
+
+ 
 
   const fetchProducts = async () => {
     try {
@@ -94,7 +41,7 @@ export default function ExpandableCardDemo() {
         title: "Success",
         description: "Books fetched successfully!",
       });
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error:", error);
 
       toast({
@@ -115,12 +62,10 @@ export default function ExpandableCardDemo() {
 
   return (
     <div>
-
-  
     {/* Main Content */}
-    <div className="flex mt-20 ">
+    <div className="flex mt-20">
       {/* Sidebar Section (Filter Section) */}
-      <div className="hidden lg:block fixed lg:w-1/4 p-4  bg-gray-100 rounded-lg shadow h-full left-0 top-20">
+      <div className="hidden lg:block fixed lg:w-1/4 p-4 bg-gray-100 rounded-lg shadow h-full left-0 top-20">
         <h3 className="text-lg font-semibold mb-4">Filters</h3>
   
         {/* Category Filter */}
@@ -144,7 +89,7 @@ export default function ExpandableCardDemo() {
         {/* Price Range Filter */}
         <div className="mb-4">
           <label htmlFor="priceRange" className="block text-sm font-medium text-gray-700">
-            Price Range upto ({priceFilter.min})
+            Price Range upto ({priceFilter.min || "0"})
           </label>
           <div className="flex space-x-2 items-center">
             <input
@@ -153,10 +98,10 @@ export default function ExpandableCardDemo() {
               min="20"
               max="10000"
               step="10"
-              value={priceFilter.min}
+              value={priceFilter.min || 20}
               className="flex-grow"
               onChange={(e) =>
-                setPriceFilter((prev) => ({ ...prev, min: e.target.value }))
+                setPriceFilter((prev) => ({ ...prev, min: parseInt(e.target.value, 10) }))
               }
             />
           </div>
@@ -165,7 +110,7 @@ export default function ExpandableCardDemo() {
         {/* Location Filter */}
         <div className="mb-4">
           <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-            Location
+            City
           </label>
           <input
             type="text"
@@ -174,7 +119,6 @@ export default function ExpandableCardDemo() {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             onChange={(e) => setLocationFilter(e.target.value)}
           />
-          {message}
         </div>
   
         {/* Condition Filter */}
@@ -209,31 +153,29 @@ export default function ExpandableCardDemo() {
             type="search"
             placeholder="Search"
             className="w-1/3 px-4 py-2 rounded-lg border"
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Link
-          href="view-book"
-          target="_blank"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
+              
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.isArray(products) && products.length > 0 ? (
             products.map((card) => (
               <motion.div
-                key={`card-${card.bookName}-${card._id}`}
-                layoutId={`card-${card.bookName}-${card._id}`}
+                key={`card-${card.bookName || "unknown"}-${card._id || "unknown"}`}
+                layoutId={`card-${card.bookName || "unknown"}-${card._id || "unknown"}`}
                 onClick={() => setActive(card)}
-                className="flex flex-col bg-white shadow-lg rounded-xl cursor-pointer p-4 transition-transform transform  hover:shadow-gray-400 dark:bg-neutral-800"
-                aria-label={`View details of ${card.bookName}`}
+                className="flex flex-col bg-white shadow-lg rounded-xl cursor-pointer p-4 transition-transform transform hover:shadow-gray-400 dark:bg-neutral-800"
+                aria-label={`View details of ${card.bookName || "this book"}`}
               >
                 {/* Book Image */}
                 <motion.div
-                  layoutId={`image-${card.bookName}-${card._id}`}
+                  layoutId={`image-${card.bookName || "unknown"}-${card._id || "unknown"}`}
                   className="w-full h-48 rounded-md overflow-hidden bg-gray-200"
                 >
                   {card.bookImages?.length > 0 ? (
                     <img
                       src={card.bookImages[0]}
-                      alt={card.bookName}
+                      alt={card.bookName || "Book cover"}
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
@@ -247,13 +189,13 @@ export default function ExpandableCardDemo() {
                 {/* Book Details */}
                 <div className="mt-4">
                   <motion.h3
-                    layoutId={`title-${card.bookName}-${card._id}`}
+                    layoutId={`title-${card.bookName || "unknown"}-${card._id || "unknown"}`}
                     className="text-lg font-semibold text-neutral-800 dark:text-neutral-200 truncate"
                   >
-                    {card.bookName}
+                    {card.bookName || "Unknown Book"}
                   </motion.h3>
                   <motion.p
-                    layoutId={`description-${card.price}-${card._id}`}
+                    layoutId={`description-${card.price || 0}-${card._id || "unknown"}`}
                     className="text-gray-600 dark:text-gray-400 mt-1"
                   >
                     {card.price && card.price > 0
@@ -261,26 +203,31 @@ export default function ExpandableCardDemo() {
                       : "Price not available"}
                   </motion.p>
                   <motion.p
-                    layoutId={`description-${card.condition}-${card._id}`}
+                    layoutId={`description-${card.condition || "unknown"}-${card._id || "unknown"}`}
                     className="text-gray-600 flex dark:text-gray-400 mt-1"
                   >
-                    <span className="font-bold">Condition: </span> {card.condition}
+                    <span className="font-bold">Condition: </span> {card.condition || "Not specified"}
                   </motion.p>
                   <motion.p
-                    layoutId={`description-${card.location}-${card._id}`}
+                    layoutId={`description-${card.location || "unknown"}-${card._id || "unknown"}`}
                     className="text-gray-600 flex dark:text-gray-400 mt-1"
                   >
                     <FaLocationDot className="m-1 text-red-600" />
-                    {card.location.toUpperCase()}
+                    {card.location ? card.location.toUpperCase() : "Location not available"}
                   </motion.p>
                 </div>
   
                 {/* Add to Cart Button */}
-                <Link href="/view-book" target="_blank">
-                  <button className="mt-4 w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 focus:ring-2 focus:ring-orange-300 transition">
-                    View Details
-                  </button>
-                </Link>
+                <button
+                  onClick={() =>
+                    card._id
+                      ? router.replace(`/view-book/${card._id}-${card.category}`)
+                      : console.error("Book ID is missing")
+                  }
+                  className="mt-4 w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 focus:ring-2 focus:ring-orange-300 transition"
+                >
+                  View Details
+                </button>
               </motion.div>
             ))
           ) : (
@@ -288,9 +235,9 @@ export default function ExpandableCardDemo() {
               No books found
             </div>
           )}
-        </Link>
+        </div>
       </div>
     </div>
-  </div>  
+  </div>   
   );
 }
