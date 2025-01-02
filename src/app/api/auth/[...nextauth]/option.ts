@@ -54,8 +54,11 @@ export const authOptions : NextAuthOptions = {
                 token._id = user._id?.toString();
                 token.isVerifiedEmail = user.isVerifiedEmail;
                 token.userFirstName =  user.userFirstName;
+                token.userLastName = user.userLastName;
                 token.email = user.email;
-                // token.location = user.location;
+                token.location = user.location;
+                token.avatar = user.avatar;
+                token.mobileNo = user.mobileNo;
             }
             return token
           },
@@ -65,7 +68,10 @@ export const authOptions : NextAuthOptions = {
                 session.user.isVerifiedEmail = token.isVerifiedEmail;
                 session.user.userFirstName =  token.userFirstName;
                 session.user.email = token.email;
-                // session.user.location = token.location;
+                session.user.location = token.location;
+                session.user.userLastName = token.userLastName;
+                session.user.avatar = token.avatar;
+                session.user.mobileNo = token.mobileNo;
             }
             return session
           }

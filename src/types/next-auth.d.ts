@@ -8,6 +8,9 @@ declare module 'next-auth' {
         userFirstName?:string;
         userLastName?:string;
         email?:string;
+        location?:string;
+        avatar?:string;
+        mobileNo?:string;
     }
     interface Session{
         user:{
@@ -16,6 +19,9 @@ declare module 'next-auth' {
              userFirstName?:string;
              userLastName?:string;
              email?:string;
+             location?:string;
+             avatar?:string;
+             mobileNo?:string;
         }  & DefaultSession;['user']
 
     }
@@ -28,5 +34,8 @@ declare module 'next-auth/jwt' {
         userFirstName?:string;
         userLastName?:string;
         email?:string;
+        location?:string;
+        avatar?:string;
+        mobileNo?:string;
     }
 }
