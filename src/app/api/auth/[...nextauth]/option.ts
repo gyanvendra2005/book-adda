@@ -49,7 +49,7 @@ export const authOptions : NextAuthOptions = {
                  
     
           
-           async jwt({ token, user  }) {
+           async jwt({ token, user,trigger,session  }) {
             if(user){
                 token._id = user._id?.toString();
                 token.isVerifiedEmail = user.isVerifiedEmail;
@@ -59,6 +59,9 @@ export const authOptions : NextAuthOptions = {
                 token.location = user.location;
                 token.avatar = user.avatar;
                 token.mobileNo = user.mobileNo;
+            }
+            if(trigger === 'update'){
+                return { ...token,  ...session?.user }
             }
             return token
           },

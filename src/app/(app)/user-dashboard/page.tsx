@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 
 export default function UserDashboard() {
-  let { data: session,status } = useSession();
+  let { data: session,status,update } = useSession();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isPasswordEditable, setIsPasswordEditable] = useState(false);
@@ -57,9 +57,19 @@ export default function UserDashboard() {
       console.log(response.data.data.userFirstName);
       
       if(response.status === 200){
-        const newSession = await fetch("/api/auth/session").then((res) =>
-          res.json()
-        );
+        // const newSession = await fetch("/api/auth/session").then((res) =>
+        //   res.json()
+        // );
+        // console.log(newSession);
+        
+        await update({
+          ...session,
+          user: {
+            ...session?.user,
+            userFirstName: response.data.data.userFirstName,
+            userLastName: response.data.data.userLastName,
+          },
+        });
         toast({
           title: "Profile Updated",
           description: "Your profile has been updated successfully refreshed the page to see the changes",
@@ -128,151 +138,136 @@ export default function UserDashboard() {
   };
 
   return (
-    <div className="bg-gray-300">
-      <div className=" mx-auto p-6">
-        {/* Back Button */}
-        <button
-          className="text-3xl text-orange-500 hover:text-orange-700 dark:text-white flex items-center ml-8 m-2"
-          onClick={() => history.back()}
-          aria-label="Go back"
-        >
-          <IoMdArrowRoundBack />
-        </button>
-
-       {/* Profile Title */}
-    <h1 className="ml-8 font-bold text-xl text-gray-800 dark:text-white">Profile</h1>
-
-{/* Profile Grid */}
-<div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-10">
-  {/* Profile Card */}
-  <div className="relative bg-gradient-to-br bg-white text-black p-6 rounded-lg shadow-md">
-
-    <div className="relative z-10 flex flex-col items-center">
-       <div className="rounded-full h-20 w-20 bg-slate-200 flex justify-center items-center text-xl font-semibold text-gray-700">
-          {session?.user?.userFirstName
-          ? session.user.userFirstName[0].toUpperCase()
-          : "?"}
-       </div>
-
-      {/* User Name */}
-      <h2 className="text-2xl font-bold mt-4">{session?.user?.userFirstName ?? "Not Signed In"}</h2>
-      
-      {/* User Role or Bio */}
-      <p className="text-sm italic mt-2 text-black flex flex-row">
-        <FaMapMarkerAlt className="mr-1 mt-1 text-red-700" />
-        {userLocation ? `${userLocation}` : "Location not set"}
-      </p>
+    <div className="bg-gray-200 h-full">
+    <div className="max-w-6xl mx-auto p-4 sm:p-8">
+      {/* Back Button */}
+      <button
+        className="text-2xl sm:text-3xl text-orange-500 hover:text-orange-700 dark:text-white flex items-center mb-4"
+        onClick={() => history.back()}
+        aria-label="Go back"
+      >
+        <IoMdArrowRoundBack className="mr-2" />
+        Back
+      </button>
+  
+      {/* Profile Title */}
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">Profile</h1>
+  
+      {/* Profile Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        {/* Profile Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 flex flex-col items-center text-center relative">
+          {/* User Avatar */}
+          <div className="relative w-32 h-32 rounded-full bg-slate-200 flex justify-center items-center text-4xl font-semibold text-gray-700 overflow-hidden">
+            {session?.user?.userFirstName
+              ? session.user.userFirstName[0].toUpperCase()
+              : "?"}
+          </div>
+  
+          {/* User Name */}
+          <h2 className="text-2xl font-bold mt-4 text-gray-800">
+            {session?.user?.userFirstName ?? "Not Signed In"}
+          </h2>
+  
+          {/* User Location */}
+          <p className="text-gray-500 flex items-center mt-2">
+            <FaMapMarkerAlt className="mr-2 text-red-500" />
+            {userLocation || "Location not set"}
+          </p>
+  
+          {/* User Stats */}
+          <div className="mt-6 w-full text-left">
+            <div className="flex justify-between items-center text-gray-700 font-medium mb-2">
+              <span>Total Purchases:</span>
+              <span>25</span>
+            </div>
+            <div className="flex justify-between items-center text-gray-700 font-medium mb-2">
+              <span>Books Sold:</span>
+              <span>15</span>
+            </div>
+            <div className="flex justify-between items-center text-gray-700 font-medium">
+              <span>Rating:</span>
+              <span>4.5/5</span>
+            </div>
+          </div>
+        </div>
+  
+        {/* User Information Card */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-gray-600 text-lg">User Information</h2>
+            <button
+              className="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition"
+              aria-label="Edit user information"
+              onClick={handleEditToggle}
+            >
+              {isEditing ? "Save" : "Edit"}
+            </button>
+          </div>
+  
+          {/* User Details */}
+          {[
+            { label: "Firstname", icon: FaUser, value: userFirstName, onChange: setUserFirstName },
+            { label: "Lastname", icon: FaUser, value: userLastName, onChange: setUserLastName },
+            { label: "E-Mail", icon: FaEnvelope, value: email, disabled: true },
+            { label: "Phone", icon: FaPhone, value: mobileNo, disabled: true },
+          ].map(({ label, icon: Icon, value, onChange, disabled }, index) => (
+            <div className="mb-4" key={index}>
+              <h3 className="text-gray-500 flex items-center mb-1">
+                <Icon className="mr-2" />
+                {label}
+              </h3>
+              <input
+                type="text"
+                className={`w-full p-2 rounded ${
+                  isEditing && !disabled ? "bg-white border" : "bg-gray-100"
+                }`}
+                value={value}
+                disabled={!isEditing || disabled}
+                onChange={(e) => onChange && onChange(e.target.value)}
+              />
+            </div>
+          ))}
+  
+          {/* Password Section */}
+          <div>
+            <h3 className="text-gray-500 flex items-center mb-1">
+              <IoMdKey className="mr-2" />
+              Password
+            </h3>
+            {isPasswordEditable ? (
+              <div className="flex items-center">
+                <input
+                  type="password"
+                  className="w-full p-2 rounded border"
+                  value={password}
+                  placeholder="New Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  className="bg-pink-500 text-white px-4 py-2 ml-2 rounded-lg hover:bg-pink-600 transition"
+                  onClick={savePassword}
+                >
+                  Save
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center">
+                <FaCheckCircle className="text-green-500 mr-2" />
+                <p className="text-gray-500">Password is Secure</p>
+                <button
+                  className="ml-4 text-blue-600"
+                  onClick={() => setIsPasswordEditable(true)}
+                >
+                  Forgot Password?
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
-          {/* User Information Card */}
-          <div className="bg-white p-6 rounded-lg shadow-md dark:bg-gray-800">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-gray-500 dark:text-gray-300">User Information</h2>
-              <button
-                className="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition"
-                aria-label="Edit user information"
-                onClick={handleEditToggle}
-              >
-                {isEditing ? "Save" : "Edit"}
-              </button>
-            </div>
-            {/* User Details */}
-            <div className="mb-4">
-              <h3 className="text-gray-500 dark:text-gray-300 flex items-center">
-                <FaUser className="mr-2" />
-                Firstname
-              </h3>
-              <input
-                type="text"
-                className={`w-full p-2 rounded ${
-                  isEditing ? "bg-white border" : "bg-transparent border-none"
-                }`}
-                disabled={!isEditing}
-                value={userFirstName}
-                onChange={(e) => setUserFirstName(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <h3 className="text-gray-500 dark:text-gray-300 flex items-center">
-                <FaUser className="mr-2" />
-                Lastname
-              </h3>
-              <input
-                type="text"
-                className={`w-full p-2 rounded ${
-                  isEditing ? "bg-white border" : "bg-transparent border-none"
-                }`}
-                disabled={!isEditing}
-                value={userLastName}
-                onChange={(e) => setUserLastName(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <h3 className="text-gray-500 dark:text-gray-300 flex items-center">
-                <FaEnvelope className="mr-2" />
-                E-Mail
-              </h3>
-              <input
-                type="email"
-                className={`w-full p-2 rounded bg-transparent`}
-                disabled={true}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <h3 className="text-gray-500 dark:text-gray-300 flex items-center">
-                <FaPhone className="mr-2" />
-                Phone
-              </h3>
-              <input
-                type="tel"
-                className={`w-full p-2 rounded bg-transparent `}
-                disabled={true}
-                value={mobileNo}
-                onChange={(e) => setMobileNo(e.target.value)}
-              />
-            </div>
-
-            {/* Password Status */}
-           {isPasswordEditable ?  <div>
-            <span className="text-gray-500 dark:text-gray-300 flex flex-auto">
-              <IoMdKey className="m-1"/>
-              <h3 >Password</h3>
-              </span>
-              <div className="flex items-center">
-                {/* <FaCheckCircle className="text-green-500" /> */}
-                <input
-                type="tel"
-                className={`w-full p-2 rounded ${
-                  isEditing ? "bg-white border" : "bg-transparent border-none"
-                }`}
-                disabled={!isPasswordEditable}
-                value={password}
-                placeholder="New Password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button className="bg-pink-500 text-white px-2 ml-2 py-2 rounded-lg hover:bg-pink-600 transition" onClick={savePassword}>
-                Change
-              </button>
-              </div>
-            </div>: 
-            <div>
-              <span className="text-gray-500 dark:text-gray-300 flex flex-auto">
-              <IoMdKey className="m-1"/>
-              <h3 >Password</h3>
-              </span>
-               <div className="flex flex-row">
-               <FaCheckCircle className="text-green-500 mt-1" />
-               <p>Password is Secure </p> 
-               </div>
-                <button onClick={() => setIsPasswordEditable(true)} className="text-blue-600"> Forgret Password?Click here</button>
-            </div>}
-          </div>
-        </div>
-          </div>
-        </div>
     //   </div>
     // </div>
   );

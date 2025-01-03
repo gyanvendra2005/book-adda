@@ -64,6 +64,7 @@ export default function InputOTPControlled() {
             title:"Success",
             description:response.data.message
         })
+        router.replace("/user-dashboard")
     } catch (error) {
         console.log("Error in sign up of user",error);
           toast({
