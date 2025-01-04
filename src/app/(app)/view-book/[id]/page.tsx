@@ -25,11 +25,15 @@ export default function ViewBook() {
   const [activecoupon, setCoupon] = useState();
   const [discount, setDiscount] = useState();
   console.log(discount);
+  // const[category,setCategory] = useState();
   
   
 
   const details = params.id;
   const arr = details.split("-");
+  console.log("Product ID from params:", details);
+  console.log("Product ID from params:", arr);
+  
     const id = arr[0];
 
 
@@ -61,6 +65,7 @@ export default function ViewBook() {
   const bookDetails = async () => {
     try {
       const response = await axios.get(`/api/getbooks?_id=${id}`);
+      // setCategory(response.data.books[0].category);
       const responses = await axios.get(`/api/getbooks?category=${category}`);
       console.log("Fetched books:", response.data.books);
       console.log("Fetched books:", response.data.books);
@@ -271,7 +276,7 @@ export default function ViewBook() {
           className="w-full max-w-5xl mx-auto"
         >
           <CarouselContent>
-            {products.map((book, index) => (
+            {product?products.map((book, index) => (
               <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/5">
                 <div className="p-2">
                   <Card>
@@ -287,7 +292,7 @@ export default function ViewBook() {
                   </Card>
                 </div>
               </CarouselItem>
-            ))}
+            )):"No Similar Books Found"}
           </CarouselContent>
           <CarouselPrevious className="text-gray-600 hover:text-gray-800" />
           <CarouselNext className="text-gray-600 hover:text-gray-800" />
@@ -316,4 +321,3 @@ export default function ViewBook() {
   </div>
   );
 }
-

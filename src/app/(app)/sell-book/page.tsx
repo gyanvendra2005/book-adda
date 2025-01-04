@@ -10,9 +10,6 @@ import axios from "axios";
 import cities from "@/cities.json";
 import { useSession } from 'next-auth/react';
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { MdEmail } from "react-icons/md";
-import Link from "next/link";
-import { FaInstagram } from "react-icons/fa6";
 
 export default function BookSellingPage() {
   const [bookName, setBookName] = useState("");
@@ -33,6 +30,8 @@ export default function BookSellingPage() {
   const { data: session } = useSession();
   const email = session?.user.email;
   const [words, setWords] = useState<number>(0);
+  const userId = session?.user.id;
+
 
   // Categories and conditions for books
   const bookCategories = ["Education", "Fiction", "Non-Fiction", "Biography", "Self-Help", "Science", "Technology", "History"];
@@ -71,6 +70,7 @@ export default function BookSellingPage() {
       formData.append("description", description || "");
       formData.append("location", city);
       formData.append("email", email || "");
+      formData.append("userId", userId || "");
   
       // Append each file to FormData
       files.forEach((file) => {

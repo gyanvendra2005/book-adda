@@ -6,22 +6,15 @@ import { useToast } from '@/hooks/use-toast';
 import  {FaLocationDot } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import Link from "next/link";
  
 
-export default function ExpandableCardDemo() {
-  const [active, setActive] = useState<[number] | boolean | null>(
-    null
-  );
-  const ref = useRef<React.RefObject<null>>(null);
-  const id = useId();
+export default function ExpandableCardDemo() {;
   const [category,setCategoryFilter] = useState('')
   const [priceFilter, setPriceFilter] = useState<{ min: number; max: number }>({ min: 20, max: 10000 });
 
   const[location,setLocationFilter]=useState('')
   const[condition,setConditionFilter]=useState('')
-  const [city, setCity] = useState("");
-  const [isCityFound, setCityFound] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
   console.log(location,condition,category,message);
   
@@ -63,19 +56,6 @@ export default function ExpandableCardDemo() {
 
   return (
     <div>
-      {/* Header Section */}
-      {/* <div className="items-center mt-10 mx-4">
-        <button
-          className="text-3xl text-orange-500 hover:text-orange-700 dark:text-white flex items-center ml-8 m-2"
-          onClick={() => history.back()}
-        >
-          <IoMdArrowRoundBack />
-        </button>
-        <h1 className="ml-8 font-bold text-xl text-gray-800 dark:text-white">
-          SELL-BOOKS
-        </h1>
-      </div> */}
-
       {/* Main Content */}
       <div className="flex mt-20">
         {/* Sidebar Section */}
@@ -187,7 +167,7 @@ export default function ExpandableCardDemo() {
                 <motion.div
                   key={card._id}
                   className="flex flex-col bg-white shadow-lg rounded-xl cursor-pointer p-4 transition-transform transform hover:shadow-gray-400 dark:bg-neutral-800"
-                  onClick={() => router.push(`/view-book/${card._id}`)}
+                  onClick={() => router.push(`/view-book/${card._id}-${card.category}`)}
                 >
                   <div className="w-full h-48 rounded-md overflow-hidden bg-gray-200">
                     {card.bookImages?.[0] ? (
@@ -216,9 +196,15 @@ export default function ExpandableCardDemo() {
                     <FaLocationDot className="text-red-600 mr-2" />
                     {card.location?.toUpperCase() || "Location not available"}
                   </p>
-                  <button className="mt-4 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600">
-                    View Details
+                 
+                  {/* <Link href={`/view-book/${card._id}-${card.category}`} className="mt-4 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600"> */}
+                  <button
+                   className="mt-4 w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 focus:ring-2 focus:ring-orange-300 transition"
+                    >
+                        View Details
                   </button>
+
+                  {/* </Link> */}
                 </motion.div>
               ))
             ) : (

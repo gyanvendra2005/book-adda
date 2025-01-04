@@ -21,6 +21,7 @@ export async function POST(request:Request) {
         const subCategory = dataform.get('subCategory')
         const otherCategory = dataform.get('otherCategory')
         const location = dataform.get('location')
+        const userId = dataform.get('userId')
         console.log({...image});
         
         if(!image){
@@ -40,7 +41,7 @@ export async function POST(request:Request) {
 
         const user = await UserModel.findOne({email})
         // const location = user?.location
-        let newBook = {bookName, price,condition,edition, bookImages:[],description,category,subCategory,otherCategory,location}
+        let newBook = {bookName, price,condition,edition, bookImages:[],description,category,subCategory,otherCategory,location,userId}
         for (const data of datas) {
             newBook.bookImages.push(data.secure_url);
         }
