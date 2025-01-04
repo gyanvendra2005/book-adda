@@ -11,6 +11,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import Script from "next/script";
+import { set } from "mongoose";
 
 
 export default function ViewBook() {
@@ -23,7 +25,8 @@ export default function ViewBook() {
   const [selectedImage, setSelectedImage] = useState(null); // State to store the selected image
   const coupons = ['FICTION-50', 'COMP-30'];
   const [activecoupon, setCoupon] = useState();
-  const [discount, setDiscount] = useState();
+  const [discount, setDiscount] = useState<number>();
+  const [amount, setAmount] = useState<number>(10);
   console.log(discount);
   // const[category,setCategory] = useState();
   
@@ -41,16 +44,145 @@ export default function ViewBook() {
   const category = arr[1]
   console.log("Product ID from params:", id);
 
+
+  // razorpay payment
+
+  
+  // const createPayment = async () => {
+  //   try {
+  //     // Calculate the discounted amount in rupees
+  //     const discountedAmount = 10 - (10 * discount) / 100;
+  //     const amountInPaisa = discountedAmount * 100;
+  
+  //     // Call the backend to create a Razorpay order
+  //     const response = await axios.post('/api/createPayment', { amount: amountInPaisa });
+  
+  //     if (!response.data || !response.data.data) {
+  //       throw new Error("Invalid response from payment API");
+  //     }
+  
+  //     const { data } = response.data;
+  
+  //     // Razorpay payment options
+  //     const paymentData = {
+  //       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+  //       amount: data.amount,
+  //       currency: data.currency,
+  //       name: "Book Swap",
+  //       description: "Payment for your order",
+  //       image: "/logo.png",
+  //       order_id: data.id,
+  //       handler: (response: any) => {
+  //         alert("Payment Successful");
+  //         console.log("Payment Details:", response);
+  //         // Optionally, call a backend endpoint to verify payment
+  //       },
+  //       prefill: {
+  //         name: "Book Adda",
+  //         email: "user@example.com", // Replace with user email if available
+  //         contact: "1234567890", // Replace with user contact if available
+  //       },
+  //       theme: {
+  //         color: "#F37254", // Customize the theme color
+  //       },
+  //     };
+  
+  //     // Initialize Razorpay instance and open the payment window
+  //     const rzp1 = new (window as any).Razorpay(paymentData);
+  
+  //     // Handle payment failure
+  //     rzp1.on('payment.failed', (response: any) => {
+  //       alert("Payment Failed");
+  //       console.error("Payment Failed Details:", response.error);
+  //     });
+  
+  //     // Open the payment window
+  //     rzp1.open();
+  //   } catch (error: any) {
+  //     console.error("Error in createPayment:", error);
+  //     alert(error.message || "An error occurred while processing the payment.");
+  //   }
+  // };
+  
+
+  async function createPayment() {
+    const response = await fetch('/api/createPayment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ amount:amount*100 }),
+    });
+  
+    const data = await response.json();
+
+    const paymentData = {
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+            amount: data.amount,
+            currency: data.currency,
+            name: "Book Swap",
+            description: "Payment for your order",
+            // image: "/logo.png",
+            order_id: data.id,
+            handler: async (response: any) => {
+              //verify payment
+              const res = await fetch('/api/verify-payment', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ orderId: data.id, razorpayPaymentId: response.razorpay_payment_id, razorpaySignature: response.razorpay_signature }),
+              });
+              const result = await res.json();
+              if (result.isOk) {
+                toast({
+                  title: "Payment Successful",
+                  description: "Payment was successful!",
+                })}
+                else {
+                  toast({
+                    title: "Payment Failed",
+                    description: "Payment was unsuccessful!",
+                    variant: "destructive",
+                  });
+              }
+            },
+            prefill: {
+              name: 'Book Swap',
+          email: 'gyanvendras2004@gmail.com',
+          contact: '6396491411'
+            },
+            notes:{
+              address:"Razorpay Corporate Office"
+            },
+            theme: {
+              color: "#F37254", // Customize the theme color
+            },
+            method: {
+              netbanking: true,
+              // card: true,
+              // wallet: true,
+              upi: true, 
+            },
+    }
+    const rzp1 = new (window as any).Razorpay(paymentData);
+    rzp1.open(); 
+  }
+  
+
+
   //check coupon
     const checkCoupon = async() => {
         setDiscount(null)
         if (coupons.includes(activecoupon)) {
-            setDiscount(activecoupon.split('-')[1]);
+            setDiscount(activecoupon.split('-')[1]); 
         console.log("Coupon Applied");
+          
         toast({
             title: "Coupon Applied",
             description: "Coupon Applied Successfully!",
         });
+      //  setAmount(10 - (10 * discount) / 100);
         } else {
         console.log("Coupon Not Applied");
         toast({
@@ -100,6 +232,9 @@ export default function ViewBook() {
     setIsModalOpen(true);
   };
 
+  // discount amount
+  
+
   // Function to close the modal
   const closeModal = () => {
     setIsModalOpen(false);
@@ -112,6 +247,7 @@ export default function ViewBook() {
 
   return (
     <div className="bg-white text-gray-800">
+       <Script type="text/javascript" src="https://checkout.razorpay.com/v1/checkout.js" />
     <div className="container mx-auto px-4 py-6">
       {/* Breadcrumb */}
       <nav className="text-sm text-gray-600 mb-4">
@@ -199,6 +335,7 @@ export default function ViewBook() {
                </span>
                {discount && (
                  <p className=" ml-2 text-sm text-gray-600 mb-2 flex flex-row">
+                    {/* {10 - (10 * discount) / 100} */}
                     ₹{10 - (10 * discount) / 100}
                  </p>
     )}
@@ -208,7 +345,7 @@ export default function ViewBook() {
     <p className="text-sm text-gray-500 mb-4">
       {discount ? `You saved ₹${((10 * discount) / 100).toFixed(2)}!` : null}
     </p>
-    <button className="bg-yellow-500 text-white w-full py-2 rounded-md hover:bg-yellow-600">
+    <button className="bg-yellow-500 text-white w-full py-2 rounded-md hover:bg-yellow-600" onClick={createPayment}>
       GET USER DETAILS
     </button>
   </div>
