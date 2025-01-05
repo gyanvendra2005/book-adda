@@ -9,6 +9,7 @@ import axios from "axios";
 import cities from "@/cities.json";
 import { useSession } from 'next-auth/react';
 import { IoMdArrowRoundBack } from "react-icons/io";
+import Link from "next/link";
 
 export default function BookSellingPage() {
   const [bookName, setBookName] = useState("");
@@ -306,7 +307,7 @@ export default function BookSellingPage() {
               className="w-4 h-4 text-blue-600 rounded"
             />
             <label htmlFor="terms" className="text-sm text-neutral-600 dark:text-neutral-300">
-              I agree to the <a href="/terms-and-conditions" className="text-blue-600 underline">Terms and Conditions</a>
+              I agree to the <Link href="/terms-conditions" className="text-blue-600 underline">Terms and Conditions</Link>
             </label>
           </div>
 

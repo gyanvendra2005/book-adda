@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast'
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import cities from "@/cities.json"
+import Link from "next/link";
 
 export default function SignupForm() {
 
@@ -22,16 +23,28 @@ export default function SignupForm() {
   const [isSubmitting, setisSubmitting] = useState(false);
   const [isCityFound, setCityFound] = useState(false);
   const {toast} = useToast()
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const router = useRouter()
   let cityFound = false;
 
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
-    setisSubmitting(true)
+  
     // setCity(e.target.location.value);
+    e.preventDefault();
+    if (!termsAccepted) {
+      toast({
+        title: "Terms and Conditions",
+        description: "You must agree to the terms and conditions before submitting.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setisSubmitting(true)
     citySearch(e);
   
     try {
-          if(cityFound){
+          if(cityFound ){
             const response = await axios.post('/api/signup',{
               userFirstName:firstName,
               userLastName:lastName,
@@ -177,6 +190,22 @@ return (
            onChange={handleInputChange} />
             <p className={`${isCityFound === true ? 'text-green-500' : 'text-red-500'}`}>{message}</p>
         </LabelInputContainer>
+ 
+
+        {/* terms and conditions */}
+
+        <div className="flex items-center space-x-2 mb-4">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={termsAccepted}
+              onChange={() => setTermsAccepted(!termsAccepted)}
+              className="w-4 h-4 text-blue-600 rounded"
+            />
+            <label htmlFor="terms" className="text-sm text-neutral-600 dark:text-neutral-300">
+              I agree to the <Link href="/terms-conditions" className="text-blue-600 underline">Terms and Conditions</Link>
+            </label>
+          </div>
 
         <button
           className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
