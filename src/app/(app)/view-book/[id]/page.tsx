@@ -67,7 +67,7 @@ export default function ViewBook() {
   const [activecoupon, setCoupon] = useState<string | undefined>();
   const [discount, setDiscount] = useState<number>();
   // const [amount, setAmount] = useState<number>(10);
-  const amount = 10;
+  const amount = 1;
   console.log(discount);
   // const[category,setCategory] = useState();
   
@@ -106,7 +106,7 @@ export default function ViewBook() {
             description: "Payment for your order",
             image: "/logo.png",
             order_id: data.id,
-            handler: async (response: { razorpay_payment_id: string; razorpay_signature: string; }) => {
+            handler: async (response: any) => {
               //verify payment
               const res = await fetch('/api/verify-payment', {
                 method: 'POST',
