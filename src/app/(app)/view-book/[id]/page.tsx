@@ -106,7 +106,7 @@ export default function ViewBook() {
             description: "Payment for your order",
             image: "/logo.png",
             order_id: data.id,
-            handler: async (response: any) => {
+            handler: async (response: { razorpay_payment_id: string; razorpay_signature: string; }) => {
               //verify payment
               const res = await fetch('/api/verify-payment', {
                 method: 'POST',
