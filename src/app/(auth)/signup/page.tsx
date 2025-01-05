@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, Router } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import cities from "@/cities.json"
 
@@ -64,7 +64,7 @@ export default function SignupForm() {
 
 
 
-  const handleInputChange = (event:any) => {
+  const handleInputChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setCity(event.target.value);
   };
 

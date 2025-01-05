@@ -1,5 +1,4 @@
 import connectDB from "@/lib/dbConnect";
-import { UserModel } from "@/models/User";
 import { sendMessageEmail } from "@/sendMessageEmail/sendMessageEmail";
 
 export async function POST(request:Request){
@@ -10,7 +9,7 @@ export async function POST(request:Request){
             // console.log(firstName,email,Message);
             
               const response = await sendMessageEmail(firstName,email,Message)
-            //  console.log(response);
+             console.log(response);
              
              return Response.json(
                 {

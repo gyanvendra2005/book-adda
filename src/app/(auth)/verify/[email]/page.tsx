@@ -1,11 +1,7 @@
 "use client"
-import React, { useState } from "react";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import React from "react";
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, Router } from "lucide-react";
 import { useParams,useRouter } from "next/navigation";
 
 import {
@@ -16,7 +12,7 @@ import {
 
 export default function InputOTPControlled() {
   const [value, setValue] = React.useState("")
-  const [isSubmitting, setisSubmitting] = useState(false);
+  // const [isSubmitting, setisSubmitting] = useState(false);
   const {toast} = useToast()
   const router = useRouter()
   const params = useParams()
@@ -107,18 +103,5 @@ const BottomGradient = () => {
     );
   };
   
-  const LabelInputContainer = ({
-    children,
-    className,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-  }) => {
-    return (
-      <div className={cn("flex flex-col space-y-2 w-full", className)}>
-        {children}
-      </div>
-    );
-  };
   
   

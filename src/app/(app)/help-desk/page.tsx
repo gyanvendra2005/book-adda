@@ -5,13 +5,13 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, Router } from "lucide-react";
-import { MdEmail, MdPhone } from "react-icons/md";
+import { Loader2 } from "lucide-react";
+import { MdEmail} from "react-icons/md";
 import {FaInstagram } from "react-icons/fa";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
-export default function helpPage () {
+export default function HelpPage () {
 
     const [words, setWords] = useState<number>(0);
     const [Message, setMessage] = useState('');
@@ -74,7 +74,8 @@ export default function helpPage () {
   <div className="w-full lg:w-2/5 h-auto bg-gradient-to-br from-orange-500 to-red-800 dark:from-zinc-900 dark:to-zinc-900 text-white rounded-md font-medium shadow-lg p-10 m-4">
     <h2 className="text-4xl font-bold mb-8">Contact Us</h2>
     <p className="text-lg mb-8">
-      We'd love to hear from you! Whether you have a question, feedback, or just want to say hi, we're here for you.
+    We&apos;d love to hear from you! Whether you have a question, feedback, or just want to say hi, we&apos;re here for you.
+
     </p>
     <div className="flex items-center text-lg mb-8">
       <MdEmail className="mr-3" />
@@ -182,6 +183,7 @@ export default function helpPage () {
         ) : (
           'SEND MESSAGE'
         )}
+        <BottomGradient/>
       </button>
     </form>
   </div>

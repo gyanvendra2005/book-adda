@@ -1,8 +1,7 @@
 import connectDB from "@/lib/dbConnect";
 import {BookModel, UserModel} from "@/models/User";
 import { UploadImage } from "@/app/utils/cloudinary";
-import { any } from "zod";
-import {Book} from "@/models/User";
+
 
 
 
@@ -13,7 +12,7 @@ export async function POST(request:Request) {
         const bookName = dataform.get('bookName')
         const price = dataform.get('price')
         const email = dataform.get('email')
-        const image = dataform.getAll('images')
+        const image = dataform.getAll('images') as File[]
         const condition = dataform.get('condition')
         const edition = dataform.get('edition')
         const description =dataform.get('description')
@@ -23,6 +22,8 @@ export async function POST(request:Request) {
         const location = dataform.get('location')
         const userId = dataform.get('userId')
         console.log({...image});
+        console.log(userId);
+        
         
         if(!image){
             return Response.json(
@@ -36,19 +37,21 @@ export async function POST(request:Request) {
             )
         }
         
-        const datas = await UploadImage(image,"bookAdda")
+        const datas = await UploadImage(image as File[], "bookAdda") as { secure_url: string }[];
         // console.log(datas);
 
-        const user = await UserModel.findOne({email})
+        await UserModel.findOne({email})
         // const location = user?.location
-        let newBook = {bookName, price,condition,edition, bookImages:[],description,category,subCategory,otherCategory,location,userId}
+        const newBook: { bookName: FormDataEntryValue | null, price: FormDataEntryValue | null, condition: FormDataEntryValue | null, edition: FormDataEntryValue | null, bookImages: string[], description: FormDataEntryValue | null, category: FormDataEntryValue | null, subCategory: FormDataEntryValue | null, otherCategory: FormDataEntryValue | null, location: FormDataEntryValue | null, userId: FormDataEntryValue | null } = {bookName, price,condition,edition, bookImages:[],description,category,subCategory,otherCategory,location,userId}
         for (const data of datas) {
             newBook.bookImages.push(data.secure_url);
         }
-        // console.log(newBook);
+        console.log(newBook);
+        // console.log();
         
-        user?.bookSelling.push(newBook as Book)
-        await user?.save();
+        
+        // user?.bookSelling.push(newBook as Book)
+        // await user?.save();
         const book = new BookModel({ ...newBook });
         console.log(book);
         

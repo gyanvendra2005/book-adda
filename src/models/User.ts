@@ -11,7 +11,7 @@ export interface Book extends Document {
   description?: string;
   category: string;
   location: string;
-  userId: mongoose.Schema.Types.ObjectId;
+  userId: string;
 }
 
 export interface UserMessage extends Document {
@@ -44,10 +44,6 @@ export interface User extends Document {
 const BookSchema: Schema<Book> = new Schema({
   bookImages: {
     type: [String],
-    validate: {
-      validator: (v: string[]) => Array.isArray(v) && v.length > 0,
-      message: 'At least one image is required.',
-    },
     required: true,
   },
   bookName: { type: String, required: true },
@@ -58,7 +54,7 @@ const BookSchema: Schema<Book> = new Schema({
   description: { type: String, required: false },
   category: { type: String, required: true },
   location: { type: String, required: true },
-  userId: { type: Schema.Types.ObjectId, required: true },
+  userId: { type: String, required: true },
 });
 
 const userMessageSchema: Schema<UserMessage> = new Schema({

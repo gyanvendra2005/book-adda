@@ -1,5 +1,4 @@
 'use client';
-import ImagesSliderShow from '@/components/slideShow';
 import React from 'react';
 import banner from '@/../public/banner.jpeg';
 
@@ -66,13 +65,13 @@ export default function page() {
 {/* Why We Are Better Section */}
 <div className="mt-20 bg-gray-100 py-16">
   <div className="container mx-auto px-8">
-    <p className="text-3xl font-bold text-center text-gray-800">Why We're Better</p>
+    <p className="text-3xl font-bold text-center text-gray-800">Why We&apos;re Better</p>
     <div className="flex flex-col md:flex-row justify-between mt-12">
       {/* Filtering Options */}
       <div className="w-full md:w-1/2 space-y-8">
         <p className="text-xl font-bold text-gray-800">Advanced Filtering Options</p>
         <p className="text-gray-600">
-          We offer comprehensive book filtering options to help you easily find what you're looking for:
+          We offer comprehensive book filtering options to help you easily find what you&apos;re looking for:
         </p>
         <ul className="list-disc pl-5 text-gray-600">
           <li>Filter by category (e.g., Textbooks, Novels, Fiction, Science, etc.)</li>
@@ -86,7 +85,7 @@ export default function page() {
       <div className="w-full md:w-1/2 space-y-8">
         <p className="text-xl font-bold text-gray-800">Second-Hand Book Condition</p>
         <p className="text-gray-600">
-          We provide detailed descriptions of the condition of second-hand books to ensure that you know exactly what you're purchasing:
+          We provide detailed descriptions of the condition of second-hand books to ensure that you know exactly what you&apos;re purchasing:
         </p>
         <ul className="list-disc pl-5 text-gray-600">
           <li><strong>Like New:</strong> The book looks almost brand new with minimal signs of wear.</li>

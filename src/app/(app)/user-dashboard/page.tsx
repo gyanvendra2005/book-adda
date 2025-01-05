@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 
 export default function UserDashboard() {
-  let { data: session,status,update } = useSession();
+  const { data: session,status,update } = useSession();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isPasswordEditable, setIsPasswordEditable] = useState(false);
@@ -22,11 +22,12 @@ export default function UserDashboard() {
   const [email, setEmail] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [userLocation, setUserLocation] = useState("");
-  const [avatar, setAvatar] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [id, setId] = useState("");
   const router = useRouter()
+  console.log(isSubmitting);
+  
 
   // Update state when session data is available
 
@@ -39,7 +40,6 @@ export default function UserDashboard() {
       setEmail(session.user.email || "");
       setMobileNo(session.user.mobileNo || "");
       setUserLocation(session.user.location || "");
-      setAvatar(session.user.avatar || "");
       setPassword(""); // Keep the password empty for security
     }
   }, [session]);
@@ -78,6 +78,8 @@ export default function UserDashboard() {
       }
       setIsSubmitting(false);
     } catch (error) {
+      console.log(error);
+      
       toast({
         title: "Profile Update Failed",
         description: "An error occurred while updating your profile, please try again later",
@@ -101,6 +103,8 @@ export default function UserDashboard() {
    }
    router.replace(`/verify-password/${email}-${password}`,);
   } catch (error) {
+    console.log(error);
+    
     toast({
       title: "Password Update Failed",
       description: "An error occurred while updating your password, please try again later",

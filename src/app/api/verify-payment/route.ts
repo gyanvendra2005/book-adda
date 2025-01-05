@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { sendContsactEmail } from "@/sendContactDetails/sendContact";
+import connectDB from "@/lib/dbConnect";
+import { BookModel, UserModel } from "@/models/User";
 
 const generatedSignature = (
   razorpayOrderId: string,
@@ -15,9 +18,12 @@ const generatedSignature = (
 };
 
 export async function POST(request: NextRequest) {
-  const { orderId, razorpayPaymentId, razorpaySignature } =
-    await request.json();
+    await connectDB();
 
+  const { orderId, razorpayPaymentId, razorpaySignature,bookId } =
+    await request.json();
+  console.log(bookId);
+  
   const signature = generatedSignature(orderId, razorpayPaymentId);
   if (signature !== razorpaySignature) {
     return NextResponse.json(
@@ -27,8 +33,31 @@ export async function POST(request: NextRequest) {
   }
 
   // Probably some database calls here to update order or add premium status to user
-  return NextResponse.json(
-    { message: "payment verified successfully", isOk: true },
-    { status: 200 }
-  );
+  else{
+     const res = await BookModel.findOne({_id:bookId})
+     console.log(res);
+     
+     const userId = res?.userId
+     console.log(userId);
+     
+     const user = await UserModel.findOne({_id:userId})
+     if (user) {
+        console.log("hi u ser milla");
+        
+       sendContsactEmail(user.userFirstName, user.email, user.mobileNo);
+       return NextResponse.json(
+        { message: "payment verified successfully and contact details send", isOk: true },
+        { status: 200 }
+      );
+     } else {
+       return NextResponse.json(
+         { message: "User not found", isOk: false },
+         { status: 404 }
+       );
+     }
+  }
+//   return NextResponse.json(
+//     { message: "payment verified successfully", isOk: true },
+//     { status: 200 }
+//   );
 }

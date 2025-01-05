@@ -2,25 +2,27 @@ import React from 'react';
 import {
   Html,
   Head,
+
   Font,
   Preview,
   Heading,
   Row,
   Section,
   Text,
-  Button,
+
 } from '@react-email/components';
   
   interface VerificationEmailProps {
     firstName: string;
-    otp: string;
+    MobileNo: string;
+    email:string
   }
   
-  export default function EmailTemplate({ firstName, otp }: VerificationEmailProps) {
+  export default function EmailDetailsTemplate({ firstName,email, MobileNo }: VerificationEmailProps) {
     return (
       <Html lang="en" dir="ltr">
         <Head>
-          <title>Verify to change Password</title>
+          <title>Contact Details</title>
           <Font
             fontFamily="Roboto"
             fallbackFontFamily="Verdana"
@@ -32,22 +34,23 @@ import {
             fontStyle="normal"
           />
         </Head>
-        <Preview>Here&apos;s your verification code: {otp}</Preview>
+        <Preview>Here is the contact details </Preview>
         <Section>
           <Row>
-            <Heading as="h2">Hello {firstName},</Heading>
+            <Heading as="h2">Hello, Thanks for using Book Swap</Heading>
           </Row>
           <Row>
             <Text>
-              Please use the following verification code to change your password:
+              Hereis the contact details of the seller
             </Text>
           </Row>
           <Row>
-            <Text>{otp}</Text> 
-          </Row>
-          <Row>
             <Text>
-              If you did not request this code, please ignore this email.
+              Name:{firstName}
+              <br />
+              MobileNo.:{MobileNo}
+              <br />
+              Email:{email}
             </Text>
           </Row>
         </Section>

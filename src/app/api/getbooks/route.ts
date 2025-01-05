@@ -1,4 +1,3 @@
-import { UserModel } from "@/models/User";
 import {BookModel} from "@/models/User"
 import connectDB from "@/lib/dbConnect";
 import { ObjectId } from "mongodb";

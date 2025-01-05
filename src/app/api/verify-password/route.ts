@@ -51,6 +51,8 @@ export async function PUT(request:Request){
             )
         }  
     } catch (error) {
+        console.log(error);
+        
         return Response.json(
             {
             success:false,

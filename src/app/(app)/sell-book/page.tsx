@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -26,7 +25,6 @@ export default function BookSellingPage() {
   const [description, setDescription] = useState('');
   const [files, setFiles] = useState<File[]>([]); // Handle multiple files here
   const { toast } = useToast();
-  const router = useRouter();
   const { data: session } = useSession();
   const email = session?.user.email;
   const [words, setWords] = useState<number>(0);

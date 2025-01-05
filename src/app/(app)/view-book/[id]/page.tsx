@@ -12,28 +12,69 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import Script from "next/script";
-import { set } from "mongoose";
+
+// Declare Razorpay on the window object
+declare global {
+  interface Window {
+    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
+  }
+}
+interface RazorpayInstance {
+  open: () => void;
+  close: () => void;
+  on: (event: string, callback: () => void) => void;
+}
+interface RazorpayOptions {
+  key: string; // Your Razorpay key
+  amount: number; // Amount in paise (1 INR = 100 paise)
+  currency: string; // Currency like 'INR'
+  name: string;
+  description: string;
+  image: string;
+  handler: (response: { razorpay_payment_id: string; razorpay_signature: string; }) => void; // Callback function after payment
+  prefill: {
+    name: string;
+    email: string;
+    contact: string;
+  };
+  // notes: any; // Optional additional information
+  theme: {
+    color: string;
+  };
+}
 
 
 export default function ViewBook() {
   const { toast } = useToast();
   const params = useParams();
 
-  const [product, setProduct] = useState(null);
-  const [products, setProducts] = useState([]);
+  interface Product {
+    bookName: string;
+    author: string;
+    category: string;
+    condition: string;
+    location: string;
+    price: number;
+    description: string;
+    bookImages: string[];
+  }
+
+  const [product, setProduct] = useState<Product | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [selectedImage, setSelectedImage] = useState(null); // State to store the selected image
+  const [selectedImage, setSelectedImage] = useState<string | null>(null); // State to store the selected image
   const coupons = ['FICTION-50', 'COMP-30'];
-  const [activecoupon, setCoupon] = useState();
+  const [activecoupon, setCoupon] = useState<string | undefined>();
   const [discount, setDiscount] = useState<number>();
-  const [amount, setAmount] = useState<number>(10);
+  // const [amount, setAmount] = useState<number>(10);
+  const amount = 10;
   console.log(discount);
   // const[category,setCategory] = useState();
   
   
 
   const details = params.id;
-  const arr = details.split("-");
+  const arr = typeof details === 'string' ? details.split("-") : [];
   console.log("Product ID from params:", details);
   console.log("Product ID from params:", arr);
   
@@ -44,66 +85,6 @@ export default function ViewBook() {
   const category = arr[1]
   console.log("Product ID from params:", id);
 
-
-  // razorpay payment
-
-  
-  // const createPayment = async () => {
-  //   try {
-  //     // Calculate the discounted amount in rupees
-  //     const discountedAmount = 10 - (10 * discount) / 100;
-  //     const amountInPaisa = discountedAmount * 100;
-  
-  //     // Call the backend to create a Razorpay order
-  //     const response = await axios.post('/api/createPayment', { amount: amountInPaisa });
-  
-  //     if (!response.data || !response.data.data) {
-  //       throw new Error("Invalid response from payment API");
-  //     }
-  
-  //     const { data } = response.data;
-  
-  //     // Razorpay payment options
-  //     const paymentData = {
-  //       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-  //       amount: data.amount,
-  //       currency: data.currency,
-  //       name: "Book Swap",
-  //       description: "Payment for your order",
-  //       image: "/logo.png",
-  //       order_id: data.id,
-  //       handler: (response: any) => {
-  //         alert("Payment Successful");
-  //         console.log("Payment Details:", response);
-  //         // Optionally, call a backend endpoint to verify payment
-  //       },
-  //       prefill: {
-  //         name: "Book Adda",
-  //         email: "user@example.com", // Replace with user email if available
-  //         contact: "1234567890", // Replace with user contact if available
-  //       },
-  //       theme: {
-  //         color: "#F37254", // Customize the theme color
-  //       },
-  //     };
-  
-  //     // Initialize Razorpay instance and open the payment window
-  //     const rzp1 = new (window as any).Razorpay(paymentData);
-  
-  //     // Handle payment failure
-  //     rzp1.on('payment.failed', (response: any) => {
-  //       alert("Payment Failed");
-  //       console.error("Payment Failed Details:", response.error);
-  //     });
-  
-  //     // Open the payment window
-  //     rzp1.open();
-  //   } catch (error: any) {
-  //     console.error("Error in createPayment:", error);
-  //     alert(error.message || "An error occurred while processing the payment.");
-  //   }
-  // };
-  
 
   async function createPayment() {
     const response = await fetch('/api/createPayment', {
@@ -116,33 +97,35 @@ export default function ViewBook() {
   
     const data = await response.json();
 
+    // if (window.Razorpay) {
     const paymentData = {
-            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
             amount: data.amount,
             currency: data.currency,
             name: "Book Swap",
             description: "Payment for your order",
-            // image: "/logo.png",
+            image: "/logo.png",
             order_id: data.id,
-            handler: async (response: any) => {
+            handler: async (response: { razorpay_payment_id: string; razorpay_signature: string; }) => {
               //verify payment
               const res = await fetch('/api/verify-payment', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ orderId: data.id, razorpayPaymentId: response.razorpay_payment_id, razorpaySignature: response.razorpay_signature }),
+                body: JSON.stringify({ orderId: data.id, razorpayPaymentId: response.razorpay_payment_id, razorpaySignature: response.razorpay_signature,bookId:id }),
               });
               const result = await res.json();
               if (result.isOk) {
+                // const response = await axios.post()
                 toast({
                   title: "Payment Successful",
-                  description: "Payment was successful!",
+                  description: result.message,
                 })}
                 else {
                   toast({
                     title: "Payment Failed",
-                    description: "Payment was unsuccessful!",
+                    description:  result.message,
                     variant: "destructive",
                   });
               }
@@ -165,33 +148,33 @@ export default function ViewBook() {
               upi: true, 
             },
     }
-    const rzp1 = new (window as any).Razorpay(paymentData);
+    const rzp1 = new (window as Window).Razorpay(paymentData);
     rzp1.open(); 
   }
   
 
 
   //check coupon
-    const checkCoupon = async() => {
-        setDiscount(null)
-        if (coupons.includes(activecoupon)) {
-            setDiscount(activecoupon.split('-')[1]); 
-        console.log("Coupon Applied");
-          
-        toast({
-            title: "Coupon Applied",
-            description: "Coupon Applied Successfully!",
-        });
+    async function checkCoupon() {
+    setDiscount(undefined);
+    if (activecoupon && coupons.includes(activecoupon)) {
+      setDiscount(Number(activecoupon.split('-')[1]));
+      console.log("Coupon Applied");
+
+      toast({
+        title: "Coupon Applied",
+        description: "Coupon Applied Successfully!",
+      });
       //  setAmount(10 - (10 * discount) / 100);
-        } else {
-        console.log("Coupon Not Applied");
-        toast({
-            title: "Coupon Not Applied",
-            description: "Invalid Coupon Code!",
-            variant: "destructive",
-        });
-        }
-    };
+    } else {
+      console.log("Coupon Not Applied");
+      toast({
+        title: "Coupon Not Applied",
+        description: "Invalid Coupon Code!",
+        variant: "destructive",
+      });
+    }
+  }
 
   // Fetch book details from backend
   const bookDetails = async () => {
@@ -213,7 +196,7 @@ export default function ViewBook() {
 
       toast({
         title: "Failed to fetch book details",
-        description: error.message || "An error occurred.",
+        description: (error as Error).message || "An error occurred.",
         variant: "destructive",
       });
     }
@@ -224,10 +207,10 @@ export default function ViewBook() {
       await bookDetails();
     };
     fetchData();
-  }, [id]);
+  });
 
   // Function to handle opening the modal and setting the selected image
-  const openModal = (image) => {
+  const openModal = (image: string) => {
     setSelectedImage(image);
     setIsModalOpen(true);
   };
@@ -409,7 +392,7 @@ export default function ViewBook() {
       <div className="mt-8">
         <h2 className="text-xl font-bold mb-4">Similar Books</h2>
         <Carousel
-          opts={{ align: "start", draggable: true, loop: false }}
+          opts={{ align: "start", loop: false }}
           className="w-full max-w-5xl mx-auto"
         >
           <CarouselContent>
@@ -442,7 +425,7 @@ export default function ViewBook() {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div className="relative">
           <img
-            src={selectedImage}
+            src={selectedImage || ''}
             alt="Enlarged view"
             className="max-w-full max-h-screen"
           />

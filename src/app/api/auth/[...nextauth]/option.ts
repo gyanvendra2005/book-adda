@@ -1,4 +1,4 @@
-import { NextAuthOptions, User, DefaultSession } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs"
 import connectDB from "@/lib/dbConnect";
@@ -16,9 +16,12 @@ export const authOptions : NextAuthOptions = {
                 email: { label: "Email", type: "text" },
                 password: { label: "Password", type: "password" }
               },
-              async authorize(credentials:any):Promise<any> {
+              async authorize(credentials){
                 await connectDB()
                 try {
+                    if (!credentials) {
+                        throw new Error('Credentials are not provided');
+                    }
                     const user = await UserModel.findOne({
                         $or:[
                             {email:credentials.email},
@@ -33,14 +36,14 @@ export const authOptions : NextAuthOptions = {
                     const isPasswordCorrect =  await bcrypt.compare(credentials.password, user.password)
 
                     if(isPasswordCorrect){
-                        return user
+                        return user as unknown as User
                     }
                     else{
                         throw new Error('Password is incorrect')
                     }
 
-                } catch (error:any) {
-                    throw new error
+                } catch (error) {
+                    throw error
                 }
               }
         })

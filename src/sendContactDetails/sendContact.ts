@@ -1,24 +1,24 @@
 import { Resend } from 'resend';
 import { ApiResponse } from '@/types/apiResponse';
-import EmailTemplate from '../../emailComponents/sendVerificationEmail';
+import EmailDetailsTemplate from '../../emailComponents/sendContact';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 
-export async function sendVerificationEmail(
-    email: string,
+export async function sendContsactEmail(
     firstName: string,
-    verifyCode: string
+    email: string,
+    MobileNo: string,
+    
 ):Promise<ApiResponse> {
     try {
-          
-           
-        await resend.emails.send({
+            await resend.emails.send({
             from: 'noreply@onwaychat.xyz',
             to: email,
-            subject: 'Verification Code',
-            react: EmailTemplate({firstName, otp :verifyCode})
+            subject: 'Contact Details',
+            react: EmailDetailsTemplate({firstName, email,MobileNo})
           });
+          
         return {success:true,message:'email sent successfully'}
     } catch (emailError) {
         console.log('sendVerificationEmail Error', emailError);

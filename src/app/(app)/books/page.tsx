@@ -1,12 +1,10 @@
 "use client";
-import React, { useEffect, useId, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast';
 import  {FaLocationDot } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
-import { IoMdArrowRoundBack } from "react-icons/io";
-import Link from "next/link";
  
 
 export default function ExpandableCardDemo() {;
@@ -15,11 +13,21 @@ export default function ExpandableCardDemo() {;
 
   const[location,setLocationFilter]=useState('')
   const[condition,setConditionFilter]=useState('')
-  const [message, setMessage] = useState('');
-  console.log(location,condition,category,message);
+  // const [message, setMessage] = useState('');
+  // console.log(location,condition,category);
   
   
-  const [products, setProducts] = useState([]);
+  interface Book {
+    _id: string;
+    bookName: string;
+    price: number;
+    condition: string;
+    location: string;
+    category: string;
+    bookImages?: string[];
+  }
+
+  const [products, setProducts] = useState<Book[]>([]);
   const { toast } = useToast();
   const router = useRouter()
 
@@ -35,19 +43,19 @@ export default function ExpandableCardDemo() {;
         title: "Success",
         description: "Books fetched successfully!",
       });
-    } catch (error:any) {
+    } catch (error) {
       console.error("Error:", error);
 
       toast({
         title: "Failed to fetch books",
-        description: error.message || "An error occurred.",
+        description:  "An error occurred.",
         variant: "destructive",
       });
     }
   };
    useEffect(() => {
        fetchProducts()
-   }, [])
+   },[])
 
   const applyFilters = ()=>{
     fetchProducts()
@@ -100,7 +108,7 @@ export default function ExpandableCardDemo() {;
               value={priceFilter.min}
               className="w-full"
               onChange={(e) =>
-                setPrice((prev) => ({ ...prev, min: parseInt(e.target.value) }))
+                setPriceFilter((prev) => ({ ...prev, min: parseInt(e.target.value) }))
               }
             />
           </div>
@@ -136,8 +144,8 @@ export default function ExpandableCardDemo() {;
               onChange={(e) => setConditionFilter(e.target.value)}
             >
               <option value="">All Conditions</option>
-              <option value="new">New</option>
-              <option value="used">Used</option>
+              <option value="New">New</option>
+              <option value="Used">Used</option>
               <option value="refurbished">Refurbished</option>
             </select>
           </div>
@@ -157,12 +165,12 @@ export default function ExpandableCardDemo() {;
               type="search"
               placeholder="Search"
               className="w-1/3 px-4 py-2 rounded-lg border"
-              onChange={(e) => setSearchQuery(e.target.value)}
+              // onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.length > 0 ? (
+          {products.length > 0 ? (
               products.map((card) => (
                 <motion.div
                   key={card._id}
@@ -196,20 +204,14 @@ export default function ExpandableCardDemo() {;
                     <FaLocationDot className="text-red-600 mr-2" />
                     {card.location?.toUpperCase() || "Location not available"}
                   </p>
-                 
-                  {/* <Link href={`/view-book/${card._id}-${card.category}`} className="mt-4 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600"> */}
-                  <button
-                   className="mt-4 w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 focus:ring-2 focus:ring-orange-300 transition"
-                    >
-                        View Details
+                  <button className="mt-4 w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 focus:ring-2 focus:ring-orange-300 transition">
+                    View Details
                   </button>
-
-                  {/* </Link> */}
                 </motion.div>
               ))
             ) : (
               <p className="text-center col-span-full">
-                No books match your filters.
+                No books found for the selected filters.
               </p>
             )}
           </div>
