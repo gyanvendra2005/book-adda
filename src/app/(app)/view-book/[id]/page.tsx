@@ -207,7 +207,7 @@ export default function ViewBook() {
       await bookDetails();
     };
     fetchData();
-  });
+  },[]);
 
   // Function to handle opening the modal and setting the selected image
   const openModal = (image: string) => {
