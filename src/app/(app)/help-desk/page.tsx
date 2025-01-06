@@ -36,6 +36,7 @@ export default function HelpPage () {
           toast({
             title: "Success",
             description: response.data.message,
+            // position: "bottom-center",
           });
       
         } catch (error) {
@@ -69,19 +70,19 @@ export default function HelpPage () {
 </div>
 
 {/* Main Content */}
-<div className="flex flex-col lg:flex-row flex-wrap w-full lg:w-3/4 h-auto justify-center border shadow-lg mx-auto mt-10 lg:mt-20 rounded-xl">
+<div className="flex flex-col md:flex-row flex-wrap w-full md:w-3/4 h-auto justify-center border shadow-lg mx-auto mt-10 lg:mt-20 rounded-xl p-4">
   {/* Left Section */}
-  <div className="w-full lg:w-2/5 h-auto bg-gradient-to-br from-orange-500 to-red-800 dark:from-zinc-900 dark:to-zinc-900 text-white rounded-md font-medium shadow-lg p-10 m-4">
-    <h2 className="text-4xl font-bold mb-8">Contact Us</h2>
-    <p className="text-lg mb-8">
+  <div className="md:w-2/5 w-full md:h-2/3 h-1/3 mt-8 md:mt-24 bg-gradient-to-br from-orange-500 to-red-800 dark:from-zinc-900 dark:to-zinc-900 text-white rounded-md font-medium shadow-lg p-6 md:p-10">
+    <h2 className="text-2xl md:text-3xl font-bold mb-6">Contact Us</h2>
+    <p className="text-sm md:text-base mb-4">
     We&apos;d love to hear from you! Whether you have a question, feedback, or just want to say hi, we&apos;re here for you.
 
     </p>
-    <div className="flex items-center text-lg mb-8">
+    <div className="flex items-center text-sm md:text-base mb-8">
       <MdEmail className="mr-3" />
       <span>gyanvendras2004@gmail.com</span>
     </div>
-    <div className="flex items-center text-lg mb-8">
+    <div className="flex items-center text-sm md:text-base  mb-8">
       <Link
         href="https://instagram.com"
         target="_blank"
