@@ -12,6 +12,10 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import Script from "next/script";
+import { FaLocationDot } from "react-icons/fa6";
+// import Link from "next/link";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 // Declare Razorpay on the window object
 declare global {
@@ -57,6 +61,7 @@ export default function ViewBook() {
     price: number;
     description: string;
     bookImages: string[];
+    _id:string;
   }
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -67,6 +72,7 @@ export default function ViewBook() {
   const [activecoupon, setCoupon] = useState<string | undefined>();
   const [discount, setDiscount] = useState<number>();
   // const [amount, setAmount] = useState<number>(10);
+  const router = useRouter()
   const amount = 1;
   console.log(discount);
   // const[category,setCategory] = useState();
@@ -390,25 +396,40 @@ export default function ViewBook() {
   
       {/* Similar Books Carousel */}
       <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">Similar Books</h2>
+        <h2 className=" text:xl  font-bold mb-4">Similar Books</h2>
         <Carousel
           opts={{ align: "start", loop: false }}
-          className="w-full max-w-5xl mx-auto"
+          className="md:max-w-5xl md:mx-auto mx-10  "
         >
           <CarouselContent>
             {product?products.map((book, index) => (
-              <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/5">
-                <div className="p-2">
+              <CarouselItem key={index} className="basis-1/2 md:basis-1/5">
+                <div className="md:p-2 p-2">
                   <Card>
-                    <CardContent className="flex flex-col items-center p-4">
+                    {/* <motion.div */}
+                      {/* onClick={() =>
+                        router.push(`/view-book/${book._id}-${book.category}`)
+                      } */}
+                      
+                    {/* > */}
+                   <button onClick={() =>
+                        router.push(`/view-book/${book._id}-${book.category}`)
+                      }>
+                   <CardContent className="flex flex-col  p-4 md:p-4">
                       <img
                         src={book.bookImages[0]}
                         alt={`Cover of ${book.bookName}`}
-                        className="w-32 h-40 object-cover mb-2"
+                        className="md:w-32 md:h-40 w-26 h-32 object-cover mb-2 md:mb-2"
                       />
-                      <p className="text-sm font-bold text-center">{book.bookName}</p>
-                      <p className="text-xs text-gray-600">{book.author}</p>
+                      <p className="text-xs font-bold flex">{book.bookName}</p>
+                      <p className="text-xs text-gray-600 flex">₹{book.price}</p>
+                      <p className="text-xs text-gray-600 flex">
+                         <FaLocationDot className="text-red-600 mt-1" />
+                        {book.location}
+                      </p>
                     </CardContent>
+                   </button>
+                    {/* </motion.div> */}
                   </Card>
                 </div>
               </CarouselItem>
