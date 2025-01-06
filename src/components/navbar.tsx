@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { HoveredLink, Menu, MenuItem} from "./ui/navbar-menu";
 import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
@@ -17,22 +17,39 @@ function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
   const { data: session } = useSession();
   const pathname = usePathname();
+  const [menuLabel, setMenuLabel] = useState("Profile");
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMenuLabel("Profile");
+      } else {
+        setMenuLabel("Menu");
+      }
+        };
+        window.addEventListener("resize", handleResize);
+        handleResize();
+        return () => window.removeEventListener("resize", handleResize);
+      }, []);
+  
 
   return (
     <div className={cn("relative w-full top-0 left-0 z-10", className)}>
   <Menu setActive={setActive}>
-    <div className="flex justify-between items-center px-8 py-0">
+    <div className="flex justify-between items-center px-4 py-2 md:px-8">
       {/* Left Section */}
       <div>
         <Image
           src={logo}
           alt="Logo"
-          className="h-16 w-16 sm:h-20 sm:w-20 md:h-14 md:w-14 rounded-full"
+          className="h-12 w-12 sm:h-16 sm:w-16 md:h-14 md:w-14 rounded-full"
         />
       </div>
 
-      {/* Center Section */}
-      <div className="flex space-x-6">
+      {/* Center Section (Desktop Only) */}
+      <div
+        className={`md:flex hidden md:flex-row space-y-4 md:space-y-0 md:space-x-6 md:items-center`}
+      >
         <NavLink href="/" currentPath={pathname}>
           Home
         </NavLink>
@@ -46,18 +63,23 @@ function Navbar({ className }: { className?: string }) {
 
       {/* Right Section */}
       <div className="flex items-center space-x-4">
-        {/* Profile Section */}
-        <div className="rounded-full h-10 w-10 bg-slate-200 flex justify-center items-center text-xl font-semibold text-gray-700">
+        {/* Profile Section (Desktop Only) */}
+        <div className="rounded-full h-10 md:flex hidden w-10 bg-slate-200 justify-center items-center text-xl font-semibold text-gray-700">
           {session?.user?.userFirstName
             ? session.user.userFirstName[0].toUpperCase()
             : "?"}
         </div>
 
         {/* Dropdown Menu */}
-        <MenuItem setActive={setActive} active={active} item="Profile">
+        <MenuItem setActive={setActive} active={active} item={menuLabel}>
           <div className="flex flex-col space-y-4 text-sm">
+            {/* Mobile-Specific Links */}
+            <div className="md:hidden flex flex-col space-y-2">
+              <HoveredLink href="/">Home</HoveredLink>
+              <HoveredLink href="/sell-book">Sell Book</HoveredLink>
+              <HoveredLink href="/books">Buy Book</HoveredLink>
+            </div>
             <HoveredLink href="/user-dashboard">User</HoveredLink>
-            <HoveredLink href="/history">Books History</HoveredLink>
             <HoveredLink href="/help-desk">Help</HoveredLink>
             {session ? (
               <button
@@ -75,7 +97,6 @@ function Navbar({ className }: { className?: string }) {
     </div>
   </Menu>
 </div>
-
   );
 }
 
