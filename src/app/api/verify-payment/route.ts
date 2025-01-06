@@ -20,11 +20,11 @@ const generatedSignature = (
 export async function POST(request: NextRequest) {
     await connectDB();
 
-  const { orderId, razorpayPaymentId, razorpaySignature,bookId } =
+  const { orderId, razorpayPaymentId,bookId } =
     await request.json();
   console.log(bookId);
   
-  const signature = generatedSignature(orderId, razorpayPaymentId);
+//   const signature = generatedSignature(orderId, razorpayPaymentId);
 
   // creating problem
 //   if (signature !== razorpaySignature) {
