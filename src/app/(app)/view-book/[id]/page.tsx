@@ -14,7 +14,7 @@ import {
 import Script from "next/script";
 import { FaLocationDot } from "react-icons/fa6";
 // import Link from "next/link";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 // Declare Razorpay on the window object
