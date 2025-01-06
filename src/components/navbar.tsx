@@ -72,7 +72,7 @@ function Navbar({ className }: { className?: string }) {
 
         {/* Dropdown Menu */}
         <MenuItem setActive={setActive} active={active} item={menuLabel}>
-          <div className="flex flex-col space-y-4 text-sm">
+          <div className="flex flex-col space-y-2 text-sm">
             {/* Mobile-Specific Links */}
             <div className="md:hidden flex flex-col space-y-2">
               <HoveredLink href="/">Home</HoveredLink>
