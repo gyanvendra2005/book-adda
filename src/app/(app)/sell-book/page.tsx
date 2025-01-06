@@ -146,7 +146,7 @@ export default function BookSellingPage() {
 <div className="flex flex-col md:flex-row flex-wrap w-full md:w-3/4 h-auto justify-center border shadow-lg mx-auto mt-10 lg:mt-20 rounded-xl p-4">
 
   {/* Information Section */}
-  <div className="md:w-2/5 w-full md:h-auto h-1/3 mt-8 md:mt-24 bg-gradient-to-br from-orange-500 to-red-800 dark:from-zinc-900 dark:to-zinc-900 text-white rounded-md font-medium shadow-lg p-6 md:p-10">
+  <div className="md:w-2/5 w-full md:h-2/3 h-1/3 mt-8 md:mt-24 bg-gradient-to-br from-orange-500 to-red-800 dark:from-zinc-900 dark:to-zinc-900 text-white rounded-md font-medium shadow-lg p-6 md:p-10">
     <h2 className="text-2xl md:text-3xl font-bold mb-6">Ready to Sell?</h2>
     <p className="text-sm md:text-base mb-4">
       Provide the book details. Share a good description and pictures to make it appealing to buyers.
