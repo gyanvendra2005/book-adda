@@ -4,23 +4,23 @@ import { sendContsactEmail } from "@/sendContactDetails/sendContact";
 import connectDB from "@/lib/dbConnect";
 import { BookModel, UserModel } from "@/models/User";
 
-const generatedSignature = (
-  razorpayOrderId: string,
-  razorpayPaymentId: string
-) => {
-  const keySecret = process.env.RAZORPAY_SECRET as string;
+// const generatedSignature = (
+//   razorpayOrderId: string,
+//   razorpayPaymentId: string
+// ) => {
+//   const keySecret = process.env.RAZORPAY_SECRET as string;
 
-  const sig = crypto
-    .createHmac("sha256", keySecret)
-    .update(razorpayOrderId + "|" + razorpayPaymentId)
-    .digest("hex");
-  return sig;
-};
+//   const sig = crypto
+//     .createHmac("sha256", keySecret)
+//     .update(razorpayOrderId + "|" + razorpayPaymentId)
+//     .digest("hex");
+//   return sig;
+// };
 
 export async function POST(request: NextRequest) {
     await connectDB();
 
-  const { orderId, razorpayPaymentId,bookId } =
+  const { bookId } =
     await request.json();
   console.log(bookId);
   
