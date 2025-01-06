@@ -49,12 +49,13 @@ export async function POST(request: NextRequest) {
         { message: "payment verified successfully and contact details send", isOk: true },
         { status: 200 }
       );
-     } else {
-       return NextResponse.json(
-         { message: "User not found", isOk: false },
-         { status: 404 }
-       );
-     }
+     } 
+    //  else {
+    //    return NextResponse.json(
+    //      { message: "User not found", isOk: false },
+    //      { status: 404 }
+    //    );
+    //  }
   }
 //   return NextResponse.json(
 //     { message: "payment verified successfully", isOk: true },
