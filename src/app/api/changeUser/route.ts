@@ -2,18 +2,23 @@ import connectDB from "@/lib/dbConnect";
 import { UserModel } from "@/models/User";
 
 export async function PUT(request: Request) {
-    connectDB()
+    await connectDB()
     try {
         const {userFirstName, userLastName} = await request.json()
         const url = new URL(request.url); // Get the full URL
             const _id = url.searchParams.get('_id');
+            // console.log("hi 1");
+            // console.log(_id)
         
         const user = await UserModel.findOne({_id})
+        // console.log(user);
+        
         if(!user){
+            // console.log(user);
             return Response.json({
                 success: false,
                 message:'No user found'
-            },{status:404})
+            },{status:404})       
         }
         else{
             user.userFirstName = userFirstName;

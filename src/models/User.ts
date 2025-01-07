@@ -54,22 +54,22 @@ const BookSchema: Schema<Book> = new Schema({
   description: { type: String, required: false },
   category: { type: String, required: true },
   location: { type: String, required: true },
-  userId: { type: String, required: true },
+  // userId: { type: String, required: true },
 });
 
-const userMessageSchema: Schema<UserMessage> = new Schema({
-  content: { type: String, required: true },
-});
+// const userMessageSchema: Schema<UserMessage> = new Schema({
+//   content: { type: String, required: true },
+// });
 
 
-const MessageSchema: Schema<Message> = new Schema({
-    userFirstName: { type: String, required: true },
-    userLastName: { type: String, required: true },
-    reciverEmail: { type: String, required: true },
-    senderEmail: { type: String, required: true },
-    mobileNo: { type: String, required: true },
-    messages: { type: [userMessageSchema], default: [] },
-  });
+// const MessageSchema: Schema<Message> = new Schema({
+//     userFirstName: { type: String, required: true },
+//     userLastName: { type: String, required: true },
+//     reciverEmail: { type: String, required: true },
+//     senderEmail: { type: String, required: true },
+//     mobileNo: { type: String, required: true },
+//     messages: { type: [userMessageSchema], default: [] },
+//   });
   
 
 const UserSchema: Schema<User> = new Schema({
@@ -89,6 +89,6 @@ const UserSchema: Schema<User> = new Schema({
 // Models
 const UserModel = mongoose.models.User as mongoose.Model<User> || mongoose.model<User>('User', UserSchema);
 const BookModel = mongoose.models.Book as mongoose.Model<Book> || mongoose.model<Book>('Book', BookSchema);
-const MessageModel = mongoose.models.Message as mongoose.Model<Message> || mongoose.model<Message>('Message', MessageSchema);
+// const MessageModel = mongoose.models.Message as mongoose.Model<Message> || mongoose.model<Message>('Message', MessageSchema);
 
-export { UserModel, BookModel, MessageModel };
+export { UserModel, BookModel };
